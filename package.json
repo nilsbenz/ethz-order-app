@@ -1,0 +1,13 @@
+{
+  "name": "ethz-order-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ui": "pnpm --filter @order-app/ui",
+    "webapp": "pnpm --filter webapp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
