@@ -1,6 +1,6 @@
 import { cn } from "@order-app/ui";
 import { HomeIcon, LucideIcon, UserIcon } from "lucide-react";
-import { useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Page } from "../../lib/pages";
 
@@ -41,25 +41,32 @@ function BottomNavigationElement({ element }: { element: NavElement }) {
 }
 
 function BottomNavigation() {
-  const navigationRef = useRef<HTMLElement>(null);
+  const navigationRef = useRef<HTMLDivElement>(null);
+  const [navheight, setNavHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    if (navigationRef.current) {
+      setNavHeight(navigationRef.current.clientHeight);
+    }
+  }, []);
 
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border border-opacity-10 bg-card bg-opacity-90 px-4 pt-2 backdrop-blur"
+        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/50 bg-card/80 px-4 pt-2 backdrop-blur"
         style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
         ref={navigationRef}
       >
         <ul className="grid auto-cols-fr grid-flow-col">
           {navElements.map((e) => (
-            <BottomNavigationElement element={e} />
+            <BottomNavigationElement element={e} key={e.path} />
           ))}
         </ul>
       </nav>
       <div
-        className="mt-2 w-full"
+        className="w-full"
         style={{
-          height: `calc(${navigationRef.current?.clientHeight}px - env(safe-area-inset-bottom))`,
+          height: `${navheight}px`,
         }}
       />
     </>

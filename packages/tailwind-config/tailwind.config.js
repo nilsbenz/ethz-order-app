@@ -5,7 +5,7 @@ module.exports = {
   darkMode: ["class"],
   content: [
     "./src/**/*.{ts,tsx}",
-    "**/*/index.html",
+    "./**/*.html",
     "./node_modules/@order-app/ui/src/**/*.{ts,tsx}",
   ],
   theme: {
