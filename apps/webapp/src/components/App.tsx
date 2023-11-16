@@ -5,11 +5,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTrigger,
-} from '@order-app/ui';
-import { AppUser } from 'order-app';
+} from "@order-app/ui";
+import { AppUser } from "order-app";
 
 function App() {
-  const test: AppUser = { username: '4' };
+  const test: AppUser = { username: "4" };
 
   console.log(test);
 
