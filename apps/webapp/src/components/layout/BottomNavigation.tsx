@@ -1,6 +1,5 @@
 import { cn } from "@order-app/ui";
 import { HomeIcon, LucideIcon, UserIcon } from "lucide-react";
-import { useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Page } from "../../lib/pages";
 
@@ -26,7 +25,7 @@ function BottomNavigationElement({ element }: { element: NavElement }) {
       <Link to={element.path}>
         <span
           className={cn(
-            "flex flex-col items-center gap-[3px] transition-colors",
+            "flex flex-col items-center gap-[3px] text-sm transition-colors",
             isActive
               ? "font-medium text-card-foreground"
               : "text-card-foreground/60"
@@ -41,32 +40,32 @@ function BottomNavigationElement({ element }: { element: NavElement }) {
 }
 
 function BottomNavigation() {
-  const navigationRef = useRef<HTMLDivElement>(null);
-  const [navheight, setNavHeight] = useState(0);
-
-  useLayoutEffect(() => {
-    if (navigationRef.current) {
-      setNavHeight(navigationRef.current.clientHeight);
-    }
-  }, []);
+  const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1.25rem) - 1.25rem))`;
+  const navHeight = "h-16";
 
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/50 bg-card/80 px-4 pt-2 backdrop-blur"
-        style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
-        ref={navigationRef}
+        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/50 bg-card/80 px-4 backdrop-blur"
+        style={{
+          paddingBottom: safeAreaHeight,
+        }}
       >
-        <ul className="grid auto-cols-fr grid-flow-col">
+        <ul
+          className={cn(
+            "grid auto-cols-fr grid-flow-col items-center",
+            navHeight
+          )}
+        >
           {navElements.map((e) => (
             <BottomNavigationElement element={e} key={e.path} />
           ))}
         </ul>
       </nav>
       <div
-        className="w-full"
+        className={cn("w-full", navHeight)}
         style={{
-          height: `${navheight}px`,
+          marginBottom: safeAreaHeight,
         }}
       />
     </>
