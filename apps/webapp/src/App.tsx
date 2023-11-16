@@ -1,4 +1,3 @@
-import type { AppUser } from '@order-app/types';
 import {
   Button,
   Dialog,
@@ -7,6 +6,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@order-app/ui';
+import { AppUser } from 'order-app';
 
 function App() {
   const test: AppUser = { username: '4' };

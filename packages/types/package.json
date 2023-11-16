@@ -1,9 +1,10 @@
 {
-  "name": "@order-app/types",
+  "name": "@types/order-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "",
+  "types": "src/index.d.ts",
   "sideEffects": false,
   "files": [
     "src"

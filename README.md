@@ -19,7 +19,7 @@ pnpm install
 Run webapp:
 
 ```bash
-pnpm webapp dev
+pnpm dev
 ```
 
 ## Build for production

@@ -23,7 +23,7 @@ importers:
       '@order-app/tailwind-config':
         specifier: workspace:^
         version: link:../../packages/tailwind-config
-      '@order-app/types':
+      '@types/order-app':
         specifier: workspace:^
         version: link:../../packages/types
       '@types/react':
