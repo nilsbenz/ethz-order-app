@@ -6,13 +6,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@order-app/ui";
-import { AppUser } from "order-app";
 
-function App() {
-  const test: AppUser = { username: "4" };
-
-  console.log(test);
-
+export default function Home() {
   return (
     <div className="grid min-h-[40rem] place-items-center">
       <Dialog>
@@ -33,5 +28,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
