@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout/Layout.tsx";
-import "./index.css";
+import "./styles/main.css";
 import { Page } from "./lib/pages.ts";
 import Home from "./routes/Home.tsx";
 import Profile from "./routes/Profile.tsx";
