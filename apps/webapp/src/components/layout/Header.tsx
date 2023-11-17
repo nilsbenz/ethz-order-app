@@ -1,12 +1,13 @@
 import { Button, cn } from "@order-app/ui";
 import { CloudIcon, SunriseIcon, SunsetIcon } from "lucide-react";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import useGeneralStore from "../../lib/store/general";
 
 function Header() {
-  const [theme, toggleTheme] = useGeneralStore((state) => [
+  const [theme, toggleTheme, setTheme] = useGeneralStore((state) => [
     state.theme,
     state.toggleTheme,
+    state.setTheme,
   ]);
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-top, 0.5rem) - 0.5rem))`;
@@ -17,6 +18,20 @@ function Header() {
     document.body.classList.add(theme);
     document.body.classList.remove(inactive);
   }, [theme]);
+
+  useEffect(() => {
+    const handleThemePreferenceChange = (event: MediaQueryListEvent) => {
+      setTheme(event.matches ? "dark" : "light");
+    };
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", handleThemePreferenceChange);
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", handleThemePreferenceChange);
+    };
+  }, []);
 
   return (
     <>
