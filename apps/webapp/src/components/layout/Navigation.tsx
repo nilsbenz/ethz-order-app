@@ -14,14 +14,14 @@ const navElements: NavElement[] = [
   { path: Page.Profile, text: "Profil", icon: UserIcon },
 ];
 
-function BottomNavigationElement({ element }: { element: NavElement }) {
+function NavigationElement({ element }: { element: NavElement }) {
   const location = useLocation();
 
   const isActive = location.pathname === element.path;
   const Icon = element.icon;
 
   return (
-    <li className="px-3">
+    <li className="px-3 sm:px-0 sm:py-2">
       <Link to={element.path}>
         <span
           className={cn(
@@ -39,31 +39,34 @@ function BottomNavigationElement({ element }: { element: NavElement }) {
   );
 }
 
-function BottomNavigation() {
+function Navigation() {
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1.25rem) - 1.25rem))`;
   const navHeight = "h-16";
 
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/50 bg-card/80 px-4 backdrop-blur"
+        className={cn(
+          "fixed bottom-0 left-0 right-0 top-auto z-30 border-t border-border/50 bg-card/80 px-4 backdrop-blur",
+          "sm:right-auto sm:top-0 sm:z-auto sm:w-20 sm:border-r sm:border-t-0 sm:pt-[calc(calc(env(safe-area-inset-top,_0px)_+_5rem))]"
+        )}
         style={{
           paddingBottom: safeAreaHeight,
         }}
       >
         <ul
           className={cn(
-            "grid auto-cols-fr grid-flow-col items-center",
+            "mx-auto grid max-w-sm auto-cols-fr grid-flow-col items-center sm:grid-flow-row",
             navHeight
           )}
         >
           {navElements.map((e) => (
-            <BottomNavigationElement element={e} key={e.path} />
+            <NavigationElement element={e} key={e.path} />
           ))}
         </ul>
       </nav>
       <div
-        className={cn("w-full", navHeight)}
+        className={cn("w-full sm:h-px sm:max-w-[5rem]", navHeight)}
         style={{
           marginBottom: safeAreaHeight,
         }}
@@ -72,4 +75,4 @@ function BottomNavigation() {
   );
 }
 
-export default BottomNavigation;
+export default Navigation;

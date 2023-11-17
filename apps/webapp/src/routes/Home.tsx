@@ -10,7 +10,7 @@ import {
 export default function Home() {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-3xl">Lorem ipsum dolor sit.</h2>
+      <h2 className="h1">Home</h2>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
         fugit consectetur deleniti deserunt maxime doloremque possimus
@@ -22,7 +22,7 @@ export default function Home() {
       </p>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>Hello world</Button>
+          <Button className="w-fit">Open dialog</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>This is a dialog.</DialogHeader>
@@ -42,6 +42,7 @@ export default function Home() {
         laudantium id omnis distinctio, facilis asperiores libero consequatur
         quisquam. Eveniet, eius quo!
       </p>
+      <h3 className="h2">Untertitel</h3>
       <p>
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eligendi, ab
         voluptate voluptatem iure corrupti cumque perferendis asperiores vero

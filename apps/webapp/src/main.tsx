@@ -5,11 +5,12 @@ import Layout from "./components/layout/Layout.tsx";
 import "./index.css";
 import { Page } from "./lib/pages.ts";
 import Home from "./routes/Home.tsx";
+import Profile from "./routes/Profile.tsx";
 
 const pages: { [key in Page]: { element: JSX.Element; withLayout: boolean } } =
   {
     [Page.Index]: { element: <Home />, withLayout: true },
-    [Page.Profile]: { element: <div>Profil</div>, withLayout: true },
+    [Page.Profile]: { element: <Profile />, withLayout: true },
   } as const;
 
 const router = createBrowserRouter(
