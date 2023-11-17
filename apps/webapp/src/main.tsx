@@ -2,30 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout/Layout.tsx";
-import "./styles/main.css";
 import { Page } from "./lib/pages.ts";
 import Home from "./routes/Home.tsx";
 import Profile from "./routes/Profile.tsx";
+import "./styles/main.css";
 
-const pages: { [key in Page]: { element: JSX.Element; withLayout: boolean } } =
-  {
-    [Page.Index]: { element: <Home />, withLayout: true },
-    [Page.Profile]: { element: <Profile />, withLayout: true },
-  } as const;
+const pages: { [key in Page]: JSX.Element } = {
+  [Page.Index]: <Home />,
+  [Page.Profile]: <Profile />,
+} as const;
 
 const router = createBrowserRouter(
-  Object.keys(pages).map((path) => {
-    const page = pages[path as Page];
-    const element = page.withLayout ? (
-      <Layout>{page.element}</Layout>
-    ) : (
-      page.element
-    );
-    return {
-      path,
-      element,
-    };
-  })
+  Object.keys(pages).map((path) => ({
+    path,
+    element: <Layout>{pages[path as Page]}</Layout>,
+  }))
 );
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
