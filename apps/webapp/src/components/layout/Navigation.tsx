@@ -47,7 +47,7 @@ function Navigation() {
     <>
       <nav
         className={cn(
-          "fixed bottom-0 left-0 right-0 top-auto z-30 border-t border-border/50 bg-card/80 px-4 pl-[env(safe-area-inset-left,_0px)] pr-[env(safe-area-inset-right,_0px)] backdrop-blur",
+          "fixed bottom-0 left-0 right-0 top-auto z-30 border-t border-border bg-card/80 px-4 pl-[env(safe-area-inset-left,_0px)] pr-[env(safe-area-inset-right,_0px)] backdrop-blur transition-colors",
           "sm:right-auto sm:top-0 sm:z-auto sm:border-r sm:border-t-0 sm:pr-0 sm:pt-[calc(calc(env(safe-area-inset-top,_0px)_+_5rem))]"
         )}
         style={{
