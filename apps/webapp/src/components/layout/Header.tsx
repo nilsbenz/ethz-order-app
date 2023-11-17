@@ -11,6 +11,8 @@ function Header() {
         className="fixed left-0 right-0 top-0 z-30 border-b border-border/50 bg-muted/80 px-4 backdrop-blur"
         style={{
           paddingTop: safeAreaHeight,
+          paddingLeft: "calc(env(safe-area-inset-left, 0px) + 1rem)",
+          paddingRight: "calc(env(safe-area-inset-right, 0px) + 1rem)",
         }}
       >
         <div className={cn("flex items-center gap-2", headerHeight)}>
