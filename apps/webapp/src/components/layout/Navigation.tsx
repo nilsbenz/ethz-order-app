@@ -31,7 +31,7 @@ function NavigationElement({ element }: { element: NavElement }) {
               : "text-card-foreground/60"
           )}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-6 w-6" strokeWidth={isActive ? 2.25 : 2} />
           {element.text}
         </span>
       </Link>

@@ -1,6 +1,8 @@
 import { Button, cn } from "@order-app/ui";
 import { CloudIcon, SunriseIcon, SunsetIcon } from "lucide-react";
 import { useEffect, useLayoutEffect } from "react";
+import { Link } from "react-router-dom";
+import { Page } from "../../lib/pages";
 import useGeneralStore from "../../lib/store/general";
 
 function Header() {
@@ -36,11 +38,11 @@ function Header() {
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-30 border-b border-border bg-muted/80 px-4 text-foreground backdrop-blur transition-colors dark:bg-card/80"
+        className="fixed left-0 right-0 top-0 z-30 border-b border-border bg-muted/80 text-foreground backdrop-blur transition-colors dark:bg-card/80"
         style={{
           paddingTop: safeAreaHeight,
-          paddingLeft: "calc(env(safe-area-inset-left, 0px) + 1rem)",
-          paddingRight: "calc(env(safe-area-inset-right, 0px) + 1rem)",
+          paddingLeft: "calc(env(safe-area-inset-left, 0px) + 0.5rem)",
+          paddingRight: "calc(env(safe-area-inset-right, 0px) + 0.5rem)",
         }}
       >
         <div
@@ -49,10 +51,12 @@ function Header() {
             headerHeight
           )}
         >
-          <div className="flex items-center gap-2">
-            <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
-            <h1 className="text-xl font-medium">bstell.online</h1>
-          </div>
+          <Button variant="ghost" asChild>
+            <Link to={Page.Index} className="flex items-center gap-2">
+              <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
+              <h1 className="text-xl font-medium">bstell.online</h1>
+            </Link>
+          </Button>
           <Button variant="ghost" onClick={toggleTheme}>
             {theme === "light" ? <SunsetIcon /> : <SunriseIcon />}
           </Button>
