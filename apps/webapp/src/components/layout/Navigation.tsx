@@ -1,5 +1,11 @@
 import { cn } from "@order-app/ui";
-import { HomeIcon, LucideIcon, UserIcon } from "lucide-react";
+import {
+  HomeIcon,
+  LandmarkIcon,
+  ListIcon,
+  LucideIcon,
+  UserIcon,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Page } from "../../lib/pages";
 
@@ -11,13 +17,17 @@ type NavElement = {
 
 const navElements: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
+  { path: Page.Events, text: "Events", icon: ListIcon },
+  { path: Page.Companies, text: "Company", icon: LandmarkIcon },
   { path: Page.Profile, text: "Profil", icon: UserIcon },
 ];
 
 function NavigationElement({ element }: { element: NavElement }) {
   const location = useLocation();
 
-  const isActive = location.pathname === element.path;
+  const isActive =
+    location.pathname === element.path ||
+    location.pathname.startsWith(`${element.path}/`);
   const Icon = element.icon;
 
   return (
