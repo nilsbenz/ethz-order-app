@@ -1,5 +1,7 @@
 export const Page = {
   Index: "/",
+  Register: "/registrieren",
+  Login: "/anmelden",
   Profile: "/profil",
   Events: "/events",
   Articles: "/events/artikel",

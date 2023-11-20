@@ -75,6 +75,10 @@
   ::selection {
     background-color: hsl(var(--primary) / 0.4);
   }
+  p a {
+    color: hsl(var(--primary));
+    font-weight: 500;
+  }
 }
 
 @layer components {

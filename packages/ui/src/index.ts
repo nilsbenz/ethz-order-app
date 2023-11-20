@@ -10,5 +10,7 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./components/dialog";
+export { Input } from "./components/input";
+export { Label } from "./components/label";
 
 export * from "./lib/utils";

@@ -1,6 +1,6 @@
+import { Page } from "@/lib/pages";
 import { Button } from "@order-app/ui";
 import { Link } from "react-router-dom";
-import { Page } from "../../lib/pages";
 
 export default function Events() {
   return (

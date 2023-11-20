@@ -1,3 +1,4 @@
+import { Page } from "@/lib/pages";
 import { cn } from "@order-app/ui";
 import {
   HomeIcon,
@@ -7,7 +8,6 @@ import {
   UserIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Page } from "../../lib/pages";
 
 type NavElement = {
   path: Page;

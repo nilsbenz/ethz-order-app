@@ -1,39 +1,26 @@
 import { Button, cn } from "@order-app/ui";
-import { CloudIcon, SunriseIcon, SunsetIcon } from "lucide-react";
-import { useEffect, useLayoutEffect } from "react";
+import {
+  CloudIcon,
+  LogInIcon,
+  LogOutIcon,
+  SunriseIcon,
+  SunsetIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { Page } from "../../lib/pages";
-import useGeneralStore from "../../lib/store/general";
+import { Page } from "@/lib/pages";
+import useGeneralStore from "@/lib/store/general";
+import useAuthStore from "@/lib/store/auth";
+import { signOut } from "@/lib/auth";
 
 function Header() {
-  const [theme, toggleTheme, setTheme] = useGeneralStore((state) => [
+  const [theme, toggleTheme] = useGeneralStore((state) => [
     state.theme,
     state.toggleTheme,
-    state.setTheme,
   ]);
+  const user = useAuthStore((state) => state.user);
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-top, 0.5rem) - 0.5rem))`;
   const headerHeight = "h-14";
-
-  useLayoutEffect(() => {
-    const inactive = theme === "light" ? "dark" : "light";
-    document.body.classList.add(theme);
-    document.body.classList.remove(inactive);
-  }, [theme]);
-
-  useEffect(() => {
-    const handleThemePreferenceChange = (event: MediaQueryListEvent) => {
-      setTheme(event.matches ? "dark" : "light");
-    };
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", handleThemePreferenceChange);
-    return () => {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .removeEventListener("change", handleThemePreferenceChange);
-    };
-  }, []);
 
   return (
     <>
@@ -52,14 +39,31 @@ function Header() {
           )}
         >
           <Button variant="ghost" asChild>
-            <Link to={Page.Index} className="flex items-center gap-2">
+            <Link to={Page.Index} className="flex items-center gap-2 px-2">
               <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
               <h1 className="text-xl font-medium">bstell.online</h1>
             </Link>
           </Button>
-          <Button variant="ghost" onClick={toggleTheme}>
-            {theme === "light" ? <SunsetIcon /> : <SunriseIcon />}
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" onClick={toggleTheme} className="p-2">
+              {theme === "light" ? (
+                <SunsetIcon strokeWidth={2.25} />
+              ) : (
+                <SunriseIcon strokeWidth={2.25} />
+              )}
+            </Button>
+            {user ? (
+              <Button variant="ghost" className="p-2" onClick={signOut}>
+                <LogOutIcon strokeWidth={2.25} />
+              </Button>
+            ) : (
+              <Button variant="ghost" asChild className="p-2">
+                <Link to={Page.Login}>
+                  <LogInIcon strokeWidth={2.25} />
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </header>
       <div
