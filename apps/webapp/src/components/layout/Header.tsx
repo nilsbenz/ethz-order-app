@@ -39,7 +39,7 @@ function Header() {
           )}
         >
           <Button variant="ghost" asChild>
-            <Link to={Page.Index} className="flex items-center gap-2 px-2">
+            <Link to={Page.Index} className="flex items-center gap-2 pl-2 pr-2">
               <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
               <h1 className="text-xl font-medium">bstell.online</h1>
             </Link>
