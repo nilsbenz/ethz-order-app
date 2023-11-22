@@ -1,5 +1,6 @@
 import { Page } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
+import { UserLevel } from "@order-app/types";
 import { Navigate, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Navigation from "./Navigation";
@@ -8,7 +9,7 @@ function Layout({
   protect,
   children,
 }: {
-  protect?: boolean;
+  protect?: UserLevel;
   children?: JSX.Element | JSX.Element[];
 }) {
   const user = useAuthStore((state) => state.user);
@@ -18,7 +19,7 @@ function Layout({
     return null;
   }
 
-  if (protect && user === null) {
+  if (!!protect && user === null) {
     return (
       <Navigate
         to={{

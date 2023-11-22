@@ -1,5 +1,8 @@
+import { Claims, UserLevel } from "@order-app/types";
 import { FirebaseError } from "firebase/app";
 import {
+  ParsedToken,
+  User,
   createUserWithEmailAndPassword,
   signOut as fbSignOut,
   sendEmailVerification,
@@ -78,4 +81,25 @@ export async function signOut() {
       message: MESSAGES[error.code as keyof typeof MESSAGES] ?? undefined,
     };
   }
+}
+
+export async function getClaims(user?: User): Promise<ParsedToken & Claims> {
+  if (!user) {
+    return {};
+  }
+  const { claims } = await user.getIdTokenResult(true);
+  return claims;
+}
+
+export function userLevelFromClaims(claims: Claims) {
+  if (claims.superadmin) {
+    return UserLevel.SuperAdmin;
+  }
+  if (claims.admin) {
+    return UserLevel.Admin;
+  }
+  if (claims.waiter) {
+    return UserLevel.Waiter;
+  }
+  return UserLevel.User;
 }

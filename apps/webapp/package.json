@@ -16,6 +16,7 @@
     "lucide-react": "^0.284.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.18.0",
     "usehooks-ts": "^2.9.1",
     "vite-tsconfig-paths": "^4.2.1",
@@ -23,7 +24,7 @@
   },
   "devDependencies": {
     "@order-app/tailwind-config": "workspace:^",
-    "@types/order-app": "workspace:^",
+    "@order-app/types": "workspace:^",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

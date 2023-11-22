@@ -1,9 +1,12 @@
+import { UserLevel } from "@order-app/types";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./components/App.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import { Page } from "./lib/pages.ts";
+import Admin from "./routes/Admin.tsx";
 import Home from "./routes/Home.tsx";
 import Login from "./routes/Login.tsx";
 import Printers from "./routes/Printers.tsx";
@@ -14,15 +17,20 @@ import Articles from "./routes/events/Articles.tsx";
 import Events from "./routes/events/Index.tsx";
 import "./styles/main.css";
 
-const pages: { [key in Page]: { element: JSX.Element; protected: boolean } } = {
-  [Page.Index]: { element: <Home />, protected: false },
-  [Page.Register]: { element: <Register />, protected: false },
-  [Page.Login]: { element: <Login />, protected: false },
-  [Page.Profile]: { element: <Profile />, protected: true },
-  [Page.Events]: { element: <Events />, protected: false },
-  [Page.Articles]: { element: <Articles />, protected: false },
-  [Page.Companies]: { element: <Companies />, protected: false },
-  [Page.Printers]: { element: <Printers />, protected: false },
+const queryClient = new QueryClient();
+
+const pages: {
+  [key in Page]: { element: JSX.Element; protected?: UserLevel };
+} = {
+  [Page.Index]: { element: <Home /> },
+  [Page.Register]: { element: <Register /> },
+  [Page.Login]: { element: <Login /> },
+  [Page.Profile]: { element: <Profile />, protected: UserLevel.User },
+  [Page.Events]: { element: <Events />, protected: UserLevel.Admin },
+  [Page.Articles]: { element: <Articles />, protected: UserLevel.Admin },
+  [Page.Companies]: { element: <Companies />, protected: UserLevel.Admin },
+  [Page.Printers]: { element: <Printers />, protected: UserLevel.Admin },
+  [Page.Admin]: { element: <Admin />, protected: UserLevel.SuperAdmin },
 } as const;
 
 const router = createBrowserRouter(
@@ -38,8 +46,10 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App>
-      <RouterProvider router={router} />
-    </App>
+    <QueryClientProvider client={queryClient}>
+      <App>
+        <RouterProvider router={router} />
+      </App>
+    </QueryClientProvider>
   </React.StrictMode>
 );

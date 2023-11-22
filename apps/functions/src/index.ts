@@ -1,6 +1,11 @@
+import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import { handleUpdateSuperAdminStatus } from "./auth";
 
-export const helloWorld = functions.https.onRequest((_request, response) => {
-  functions.logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
-});
+const REGION = "europe-west1";
+
+admin.initializeApp();
+
+export const updateSuperAdminStatus = functions
+  .region(REGION)
+  .https.onCall(handleUpdateSuperAdminStatus);

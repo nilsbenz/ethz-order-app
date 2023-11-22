@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r dev",
-    "ui": "pnpm --filter @order-app/ui",
-    "webapp": "pnpm --filter webapp"
+    "webapp": "pnpm --filter webapp",
+    "functions": "pnpm --filter functions",
+    "ui": "pnpm --filter @order-app/ui"
   },
   "keywords": [],
   "author": "",
