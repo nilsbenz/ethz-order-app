@@ -1,15 +1,23 @@
 import { login } from "@/lib/auth";
 import { Page } from "@/lib/pages";
+import useAuthStore from "@/lib/store/auth";
 import { Button, Input, Label } from "@order-app/ui";
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const user = useAuthStore((state) => state.user);
   const mailInput = useRef<HTMLInputElement>(null);
   const passwordInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  function getNextPath() {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get("next") ?? Page.Profile;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,7 +31,8 @@ export default function Login() {
       }
       const res = await login(username, password);
       if (res.success) {
-        navigate(Page.Profile);
+        const next = getNextPath();
+        navigate(next);
         return;
       }
       setError(res.message ?? null);
@@ -31,6 +40,14 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (user === undefined) {
+    return null;
+  }
+
+  if (user !== null) {
+    return <Navigate to={getNextPath()} />;
   }
 
   return (

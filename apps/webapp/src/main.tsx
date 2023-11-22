@@ -14,21 +14,25 @@ import Articles from "./routes/events/Articles.tsx";
 import Events from "./routes/events/Index.tsx";
 import "./styles/main.css";
 
-const pages: { [key in Page]: JSX.Element } = {
-  [Page.Index]: <Home />,
-  [Page.Register]: <Register />,
-  [Page.Login]: <Login />,
-  [Page.Profile]: <Profile />,
-  [Page.Events]: <Events />,
-  [Page.Articles]: <Articles />,
-  [Page.Companies]: <Companies />,
-  [Page.Printers]: <Printers />,
+const pages: { [key in Page]: { element: JSX.Element; protected: boolean } } = {
+  [Page.Index]: { element: <Home />, protected: false },
+  [Page.Register]: { element: <Register />, protected: false },
+  [Page.Login]: { element: <Login />, protected: false },
+  [Page.Profile]: { element: <Profile />, protected: true },
+  [Page.Events]: { element: <Events />, protected: false },
+  [Page.Articles]: { element: <Articles />, protected: false },
+  [Page.Companies]: { element: <Companies />, protected: false },
+  [Page.Printers]: { element: <Printers />, protected: false },
 } as const;
 
 const router = createBrowserRouter(
   Object.keys(pages).map((path) => ({
     path,
-    element: <Layout>{pages[path as Page]}</Layout>,
+    element: (
+      <Layout protect={pages[path as Page].protected}>
+        {pages[path as Page].element}
+      </Layout>
+    ),
   }))
 );
 
