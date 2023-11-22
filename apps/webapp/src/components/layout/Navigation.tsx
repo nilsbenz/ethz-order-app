@@ -53,7 +53,7 @@ function NavigationElement({ element }: { element: NavElement }) {
 }
 
 function Navigation() {
-  const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1.25rem) - 1.25rem))`;
+  const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1rem) - 1rem))`;
   const navHeight = "h-16";
 
   return (
