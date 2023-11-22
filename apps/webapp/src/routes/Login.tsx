@@ -23,7 +23,7 @@ export default function Login() {
       }
       const res = await login(username, password);
       if (res.success) {
-        navigate(Page.Index);
+        navigate(Page.Profile);
         return;
       }
       setError(res.message ?? null);

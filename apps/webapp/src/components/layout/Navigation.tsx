@@ -5,7 +5,7 @@ import {
   LandmarkIcon,
   ListIcon,
   LucideIcon,
-  UserIcon,
+  PrinterIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const navElements: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
   { path: Page.Events, text: "Events", icon: ListIcon },
   { path: Page.Companies, text: "Company", icon: LandmarkIcon },
-  { path: Page.Profile, text: "Profil", icon: UserIcon },
+  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 function NavigationElement({ element }: { element: NavElement }) {
@@ -31,14 +31,17 @@ function NavigationElement({ element }: { element: NavElement }) {
   const Icon = element.icon;
 
   return (
-    <li className="px-3 sm:px-0 sm:py-2">
-      <Link to={element.path}>
+    <li className="px-3 sm:px-1.5 sm:py-2">
+      <Link
+        to={element.path}
+        className="block rounded-sm transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
         <span
           className={cn(
             "flex flex-col items-center gap-[3px] text-sm transition-colors",
             isActive
               ? "font-medium text-card-foreground"
-              : "text-card-foreground/60"
+              : "text-muted-foreground"
           )}
         >
           <Icon className="h-6 w-6" strokeWidth={isActive ? 2.25 : 2} />

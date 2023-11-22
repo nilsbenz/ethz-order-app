@@ -6,6 +6,7 @@ import Layout from "./components/layout/Layout.tsx";
 import { Page } from "./lib/pages.ts";
 import Home from "./routes/Home.tsx";
 import Login from "./routes/Login.tsx";
+import Printers from "./routes/Printers.tsx";
 import Profile from "./routes/Profile.tsx";
 import Register from "./routes/Register.tsx";
 import Companies from "./routes/companies/Index.tsx";
@@ -21,6 +22,7 @@ const pages: { [key in Page]: JSX.Element } = {
   [Page.Events]: <Events />,
   [Page.Articles]: <Articles />,
   [Page.Companies]: <Companies />,
+  [Page.Printers]: <Printers />,
 } as const;
 
 const router = createBrowserRouter(

@@ -1,16 +1,15 @@
+import { Page } from "@/lib/pages";
+import useAuthStore from "@/lib/store/auth";
+import useGeneralStore from "@/lib/store/general";
 import { Button, cn } from "@order-app/ui";
 import {
   CloudIcon,
   LogInIcon,
-  LogOutIcon,
   SunriseIcon,
   SunsetIcon,
+  UserIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Page } from "@/lib/pages";
-import useGeneralStore from "@/lib/store/general";
-import useAuthStore from "@/lib/store/auth";
-import { signOut } from "@/lib/auth";
 
 function Header() {
   const [theme, toggleTheme] = useGeneralStore((state) => [
@@ -39,30 +38,38 @@ function Header() {
           )}
         >
           <Button variant="ghost" asChild>
-            <Link to={Page.Index} className="flex items-center gap-2 pl-2 pr-2">
+            <Link
+              to={Page.Index}
+              className="flex items-center gap-2 pl-2 pr-2 transition-none"
+            >
               <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
               <h1 className="text-xl font-medium">bstell.online</h1>
             </Link>
           </Button>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" onClick={toggleTheme} className="p-2">
+            <Button variant="ghost" onClick={toggleTheme} size="icon">
               {theme === "light" ? (
                 <SunsetIcon strokeWidth={2.25} />
               ) : (
                 <SunriseIcon strokeWidth={2.25} />
               )}
             </Button>
-            {user ? (
-              <Button variant="ghost" className="p-2" onClick={signOut}>
-                <LogOutIcon strokeWidth={2.25} />
-              </Button>
-            ) : (
-              <Button variant="ghost" asChild className="p-2">
+            <Button
+              variant="ghost"
+              asChild
+              size="icon"
+              className="transition-none"
+            >
+              {user ? (
+                <Link to={Page.Profile}>
+                  <UserIcon strokeWidth={2.25} />
+                </Link>
+              ) : (
                 <Link to={Page.Login}>
                   <LogInIcon strokeWidth={2.25} />
                 </Link>
-              </Button>
-            )}
+              )}
+            </Button>
           </div>
         </div>
       </header>
