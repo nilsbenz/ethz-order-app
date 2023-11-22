@@ -38,7 +38,8 @@ function NavigationElement({ element }: { element: NavElement }) {
       >
         <span
           className={cn(
-            "flex flex-col items-center gap-[3px] text-sm transition-colors",
+            "flex flex-col items-center gap-y-[3px] text-sm transition-colors",
+            "lg:flex-row lg:gap-x-3.5 lg:pl-3 lg:text-base",
             isActive
               ? "font-medium text-card-foreground"
               : "text-muted-foreground"
@@ -69,7 +70,7 @@ function Navigation() {
       >
         <ul
           className={cn(
-            "mx-auto grid max-w-sm auto-cols-fr grid-flow-col items-center sm:w-20 sm:grid-flow-row",
+            "mx-auto grid max-w-sm auto-cols-fr grid-flow-col items-center sm:w-20 sm:grid-flow-row lg:w-48 lg:gap-y-0.5 lg:pt-6",
             navHeight
           )}
         >
@@ -79,7 +80,10 @@ function Navigation() {
         </ul>
       </nav>
       <div
-        className={cn("w-full sm:h-px sm:max-w-[5rem]", navHeight)}
+        className={cn(
+          "w-full sm:h-px sm:max-w-[5rem] lg:max-w-[12rem]",
+          navHeight
+        )}
         style={{
           marginBottom: safeAreaHeight,
         }}
