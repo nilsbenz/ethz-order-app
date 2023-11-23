@@ -20,4 +20,7 @@ export type AppUser = {
   id: UserId;
   displayName: string;
   photoUrl: string;
+  level: UserLevel;
 };
+
+export type DbAppUser = Omit<AppUser, "id">;

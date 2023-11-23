@@ -9,7 +9,8 @@ export default function App({ children }: { children: JSX.Element }) {
   useTheme();
 
   const userFetched = useAuthStore(
-    (state) => state.user !== undefined && state.userLevel !== undefined
+    (state) =>
+      state.user === null || (!!state.user && state.userData !== undefined)
   );
   const debouncedUserFetched = useDebounce(userFetched, 200);
 

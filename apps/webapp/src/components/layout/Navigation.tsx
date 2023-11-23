@@ -1,4 +1,6 @@
 import { Page } from "@/lib/pages";
+import useAuthStore from "@/lib/store/auth";
+import { UserLevel } from "@order-app/types";
 import { cn } from "@order-app/ui";
 import {
   HomeIcon,
@@ -6,6 +8,7 @@ import {
   ListIcon,
   LucideIcon,
   PrinterIcon,
+  ShieldIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -15,11 +18,16 @@ type NavElement = {
   icon: LucideIcon;
 };
 
-const navElements: NavElement[] = [
+const navElementsUser: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
   { path: Page.Events, text: "Events", icon: ListIcon },
   { path: Page.Companies, text: "Company", icon: LandmarkIcon },
   { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
+];
+
+const navElementsSuperAdmin: NavElement[] = [
+  ...navElementsUser,
+  { path: Page.Admin, text: "Admin", icon: ShieldIcon },
 ];
 
 function NavigationElement({ element }: { element: NavElement }) {
@@ -54,6 +62,15 @@ function NavigationElement({ element }: { element: NavElement }) {
 }
 
 function Navigation() {
+  const userLevel = useAuthStore(
+    (state) => state.userData?.level ?? UserLevel.User
+  );
+
+  const navElements =
+    userLevel === UserLevel.SuperAdmin
+      ? navElementsSuperAdmin
+      : navElementsUser;
+
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1rem) - 1rem))`;
   const navHeight = "h-16";
 
