@@ -8,10 +8,12 @@ export default function App({ children }: { children: JSX.Element }) {
   useUser();
   useTheme();
 
-  const user = useAuthStore((state) => state.user);
-  const debouncedUser = useDebounce(user, 200);
+  const userFetched = useAuthStore(
+    (state) => state.user !== undefined && state.userLevel !== undefined
+  );
+  const debouncedUserFetched = useDebounce(userFetched, 200);
 
-  if (debouncedUser === undefined) {
+  if (!debouncedUserFetched) {
     return (
       <div className="grid min-h-[100dvh] place-items-center text-muted-foreground">
         <div className="flex flex-col items-center gap-4">
