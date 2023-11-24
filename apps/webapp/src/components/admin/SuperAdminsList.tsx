@@ -25,7 +25,7 @@ import { httpsCallable } from "firebase/functions";
 import { Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function SuperAdminList() {
+export default function SuperAdminsList() {
   const user = useAuthStore((state) => state.user);
   const [superAdmins, setSuperAdmins] = useState<AppUser[]>();
   const [busy, setBusy] = useState(false);
@@ -84,7 +84,7 @@ export default function SuperAdminList() {
             <DialogContent>
               <DialogHeader>Super Admin entfernen?</DialogHeader>
               <DialogDescription>
-                Bist du dir sicher, dass du {admin.displayName} entfernen
+                Bist du dir sicher, dass du <b>{admin.displayName}</b> entfernen
                 möchtest?
               </DialogDescription>
               <DialogFooter>

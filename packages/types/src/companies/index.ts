@@ -19,4 +19,7 @@ export type Company = {
   id: RecordId;
   displayName: string;
   admins: UserId[];
+  archived: boolean;
 };
+
+export type DbCompany = Omit<Company, "id">;

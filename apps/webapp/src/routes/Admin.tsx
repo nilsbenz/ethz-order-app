@@ -1,5 +1,7 @@
+import CompaniesList from "@/components/admin/CompaniesList";
+import NewCompanyForm from "@/components/admin/NewCompanyForm";
 import NewSuperAdminForm from "@/components/admin/NewSuperAdminForm";
-import SuperAdminList from "@/components/admin/SuperAdminList";
+import SuperAdminsList from "@/components/admin/SuperAdminsList";
 
 export default function Admin() {
   return (
@@ -10,7 +12,13 @@ export default function Admin() {
         <h3 className="h2">Super Admins</h3>
         <NewSuperAdminForm />
       </div>
-      <SuperAdminList />
+      <SuperAdminsList />
+
+      <div className="mt-8 flex justify-between">
+        <h3 className="h2">Companies</h3>
+        <NewCompanyForm />
+      </div>
+      <CompaniesList />
     </div>
   );
 }

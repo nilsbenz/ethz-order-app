@@ -66,7 +66,6 @@ export default function NewSuperAdminForm() {
         <DialogDescription>
           <form onSubmit={handleAddSuperAdmin} className="flex flex-col gap-4">
             <Input
-              id="displayNameInput"
               ref={newSuperAdminInput}
               className="w-full"
               disabled={newSuperAdminInputState === "busy"}
