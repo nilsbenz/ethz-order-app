@@ -12,6 +12,7 @@ import Login from "./routes/Login.tsx";
 import Printers from "./routes/Printers.tsx";
 import Profile from "./routes/Profile.tsx";
 import Register from "./routes/Register.tsx";
+import Company from "./routes/companies/Company.tsx";
 import Companies from "./routes/companies/Index.tsx";
 import Articles from "./routes/events/Articles.tsx";
 import Events from "./routes/events/Index.tsx";
@@ -29,6 +30,10 @@ const pages: {
   [Page.Events]: { element: <Events />, protected: UserLevel.Admin },
   [Page.Articles]: { element: <Articles />, protected: UserLevel.Admin },
   [Page.Companies]: { element: <Companies />, protected: UserLevel.Admin },
+  [`${Page.Companies}/:company`]: {
+    element: <Company />,
+    protected: UserLevel.Admin,
+  },
   [Page.Printers]: { element: <Printers />, protected: UserLevel.Admin },
   [Page.Admin]: { element: <Admin />, protected: UserLevel.SuperAdmin },
 } as const;

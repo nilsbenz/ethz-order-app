@@ -1,6 +1,7 @@
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { companyConverter } from "@/lib/model/companies";
+import { Page } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import { Company } from "@order-app/types";
 import {
@@ -23,6 +24,7 @@ import {
 } from "firebase/firestore";
 import { Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function CompaniesList() {
   const user = useAuthStore((state) => state.user);
@@ -60,7 +62,14 @@ export default function CompaniesList() {
     <div className="flex flex-col divide-y">
       {companies?.map((company) => (
         <div key={company.id} className="flex items-center gap-2 py-1">
-          <p className="flex-grow">{company.displayName}</p>
+          <p className="flex-grow">
+            <Link
+              to={`${Page.Companies}/${company.id}`}
+              className="-mx-1 p-1 text-inherit"
+            >
+              {company.displayName}
+            </Link>
+          </p>
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon">

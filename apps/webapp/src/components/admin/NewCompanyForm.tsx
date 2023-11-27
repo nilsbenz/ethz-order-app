@@ -6,7 +6,6 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
@@ -14,8 +13,9 @@ import {
   Label,
 } from "@order-app/ui";
 import { DialogClose } from "@order-app/ui/src/components/dialog";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { PlusIcon } from "lucide-react";
+import { nanoid } from "nanoid";
 import { FormEvent, useRef, useState } from "react";
 
 export default function NewCompanyForm() {
@@ -31,14 +31,18 @@ export default function NewCompanyForm() {
       if (!displayName) {
         throw "no displayname provided";
       }
+      let id = nanoid(6);
+      while ((await getDoc(doc(db, Collection.Companies, id))).exists()) {
+        id = nanoid(6);
+      }
       const newCompany: Company = {
-        id: "",
+        id,
         displayName: companyNameInput.current?.value,
         admins: [],
         archived: false,
       };
-      await addDoc(
-        collection(db, Collection.Companies).withConverter(companyConverter),
+      await setDoc(
+        doc(db, Collection.Companies, id).withConverter(companyConverter),
         newCompany
       );
       companyNameInput.current.value = "";
@@ -60,27 +64,25 @@ export default function NewCompanyForm() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>Neue Company erstellen</DialogHeader>
-        <DialogDescription>
-          <form onSubmit={handleAddCompany} className="flex flex-col gap-4">
-            <div>
-              <Label htmlFor="companyDisplayName">Name der Company</Label>
-              <Input
-                id="companyDisplayName"
-                ref={companyNameInput}
-                className="w-full"
-                disabled={formState === "busy"}
-              />
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="ghost">Abbrechen</Button>
-              </DialogClose>
-              <Button type="submit" disabled={formState === "busy"}>
-                Hinzufügen
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogDescription>
+        <form onSubmit={handleAddCompany} className="flex flex-col gap-4">
+          <div>
+            <Label htmlFor="companyDisplayName">Name der Company</Label>
+            <Input
+              id="companyDisplayName"
+              ref={companyNameInput}
+              className="w-full"
+              disabled={formState === "busy"}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost">Abbrechen</Button>
+            </DialogClose>
+            <Button type="submit" disabled={formState === "busy"}>
+              Hinzufügen
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

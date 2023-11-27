@@ -1,7 +1,7 @@
 import { Collection } from "@/lib/collections";
 import { db, functions } from "@/lib/firebase";
 import { appUserConverter } from "@/lib/model/users";
-import { UserLevel } from "@order-app/types";
+import { AppUser, Company, UserLevel } from "@order-app/types";
 import {
   Button,
   Dialog,
@@ -9,46 +9,47 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTrigger,
-  Input,
 } from "@order-app/ui";
 import { DialogClose } from "@order-app/ui/src/components/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { PlusIcon } from "lucide-react";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
+import FindUser from "../users/FindUser";
 
-export default function NewSuperAdminForm() {
-  const newSuperAdminInput = useRef<HTMLInputElement>(null);
-  const [newSuperAdminInputState, setNewSuperAdminInputState] = useState<
+export default function NewCompanyAdminForm({ company }: { company: Company }) {
+  const [newCompanyAdminInputState, setNewCompanyAdminInputState] = useState<
     "idle" | "busy"
   >("idle");
   const [openDialog, setOpenDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AppUser>();
 
-  async function handleAddSuperAdmin(e: FormEvent<HTMLFormElement>) {
+  async function handleAddCompanyAdmin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      setNewSuperAdminInputState("busy");
-      const userId = newSuperAdminInput.current?.value;
+      setNewCompanyAdminInputState("busy");
+      const userId = selectedUser?.id;
       if (!userId) {
         throw "no userid provided";
       }
       await updateDoc(
         doc(db, Collection.Users, userId).withConverter(appUserConverter),
-        { level: UserLevel.SuperAdmin }
+        { level: UserLevel.Admin, company: company.id }
       );
       await httpsCallable(
         functions,
-        "updateSuperAdminStatus"
+        "assignUserToCompany"
       )({
         userId,
-        isSuperAdmin: true,
+        company: company.id,
+        level: UserLevel.Admin,
       });
-      newSuperAdminInput.current!.value = "";
       setOpenDialog(false);
+      setSelectedUser(undefined);
     } catch (e) {
       console.log(e);
     } finally {
-      setNewSuperAdminInputState("idle");
+      setNewCompanyAdminInputState("idle");
     }
   }
 
@@ -61,18 +62,17 @@ export default function NewSuperAdminForm() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Super Admin hinzufügen</DialogHeader>
-        <form onSubmit={handleAddSuperAdmin} className="flex flex-col gap-4">
-          <Input
-            ref={newSuperAdminInput}
-            className="w-full"
-            disabled={newSuperAdminInputState === "busy"}
-          />
+        <DialogHeader>Admin hinzufügen</DialogHeader>
+        <form onSubmit={handleAddCompanyAdmin} className="flex flex-col gap-4">
+          <FindUser value={selectedUser?.id ?? ""} onSelect={setSelectedUser} />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="ghost">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit" disabled={newSuperAdminInputState === "busy"}>
+            <Button
+              type="submit"
+              disabled={newCompanyAdminInputState === "busy"}
+            >
               Hinzufügen
             </Button>
           </DialogFooter>

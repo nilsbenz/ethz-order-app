@@ -19,8 +19,11 @@ export type Claims = {
 export type AppUser = {
   id: UserId;
   displayName: string;
+  searchName: string;
   photoUrl: string;
   level: UserLevel;
+  company: string | null;
+  event: string | null;
 };
 
 export type DbAppUser = Omit<AppUser, "id">;

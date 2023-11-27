@@ -29,9 +29,10 @@ export default function Profile() {
     }
     try {
       setDisplayNameInputState("busy");
+      const displayName = displayNameInput.current?.value;
       await updateDoc(
         doc(db, Collection.Users, userData?.id).withConverter(appUserConverter),
-        { displayName: displayNameInput.current?.value }
+        { displayName, searchName: displayName?.toLowerCase().replace(" ", "") }
       );
     } finally {
       setDisplayNameInputState("idle");
