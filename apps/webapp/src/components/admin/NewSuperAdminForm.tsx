@@ -1,7 +1,7 @@
 import { Collection } from "@/lib/collections";
 import { db, functions } from "@/lib/firebase";
 import { appUserConverter } from "@/lib/model/users";
-import { UserLevel } from "@order-app/types";
+import { AppUser, UserLevel } from "@order-app/types";
 import {
   Button,
   Dialog,
@@ -9,16 +9,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTrigger,
-  Input,
 } from "@order-app/ui";
 import { DialogClose } from "@order-app/ui/src/components/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { PlusIcon } from "lucide-react";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
+import FindUser from "../users/FindUser";
 
 export default function NewSuperAdminForm() {
-  const newSuperAdminInput = useRef<HTMLInputElement>(null);
+  const [selectedUser, setSelectedUser] = useState<AppUser>();
   const [newSuperAdminInputState, setNewSuperAdminInputState] = useState<
     "idle" | "busy"
   >("idle");
@@ -28,7 +28,7 @@ export default function NewSuperAdminForm() {
     e.preventDefault();
     try {
       setNewSuperAdminInputState("busy");
-      const userId = newSuperAdminInput.current?.value;
+      const userId = selectedUser?.id;
       if (!userId) {
         throw "no userid provided";
       }
@@ -43,7 +43,7 @@ export default function NewSuperAdminForm() {
         userId,
         isSuperAdmin: true,
       });
-      newSuperAdminInput.current!.value = "";
+      setSelectedUser(undefined);
       setOpenDialog(false);
     } catch (e) {
       console.log(e);
@@ -63,11 +63,7 @@ export default function NewSuperAdminForm() {
       <DialogContent>
         <DialogHeader>Super Admin hinzufügen</DialogHeader>
         <form onSubmit={handleAddSuperAdmin} className="flex flex-col gap-4">
-          <Input
-            ref={newSuperAdminInput}
-            className="w-full"
-            disabled={newSuperAdminInputState === "busy"}
-          />
+          <FindUser value={selectedUser?.id ?? ""} onSelect={setSelectedUser} />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="ghost">Abbrechen</Button>
