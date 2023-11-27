@@ -1,18 +1,19 @@
-import React, { useRef, useState } from "react";
+import { Button, Input } from "@order-app/ui";
+import { FormEvent, useRef, useState } from "react";
 
 const ThermalPrinter = () => {
   const [printerIPAddress, setPrinterIPAddress] = useState("192.168.0.121");
   const [printerPort, setPrinterPort] = useState("8008");
-  const [textToPrint, setTextToPrint] = useState("");
-  const [connectionStatus, setConnectionStatus] = useState("");
+  const [textToPrint, setTextToPrint] = useState("Hello world!");
+  const [connectionStatus, setConnectionStatus] = useState("Disconnected");
 
-  const ePosDevice = useRef();
-  const printer = useRef();
+  const ePosDevice = useRef<EPOSDevice>();
+  const printer = useRef<EPOSDevice["current"]>();
 
   const STATUS_CONNECTED = "Connected";
 
-  const connect = () => {
-    setConnectionStatus("Connecting ...");
+  function handleConnect(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
     if (!printerIPAddress) {
       setConnectionStatus("Type the printer IP address");
@@ -25,14 +26,14 @@ const ThermalPrinter = () => {
 
     setConnectionStatus("Connecting ...");
 
-    let ePosDev = new window.epson.ePOSDevice();
+    const ePosDev = new window.epson.ePOSDevice();
     ePosDevice.current = ePosDev;
 
     ePosDev.connect(printerIPAddress, printerPort, (data) => {
       if (data === "OK") {
         ePosDev.createDevice(
           "local_printer",
-          ePosDev.DEVICE_TYPE_PRINTER,
+          "DEVICE_TYPE_PRINTER",
           { crypto: true, buffer: false },
           (devobj, retcode) => {
             if (retcode === "OK") {
@@ -44,69 +45,61 @@ const ThermalPrinter = () => {
           }
         );
       } else {
+        setConnectionStatus("Error whilst connecting.");
         throw data;
       }
     });
-  };
+  }
 
-  const print = (text) => {
-    let prn = printer.current;
+  function handlePrint(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const prn = printer.current;
     if (!prn) {
       alert("Not connected to printer");
       return;
     }
 
-    prn.addText(text);
+    prn.addText(textToPrint);
     prn.addFeedLine(5);
-    prn.addCut(prn.CUT_FEED);
+    prn.addCut("CUT_FEED");
 
     prn.send();
-  };
+  }
 
   return (
-    <div>
-          <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <h2 className="h1">Drucker</h2>
-      <p>Manage printers</p>
-    </div>
-    
-    <div id="thermalPrinter">
-
-
-      <input
-        id="printerIPAddress"
-        placeholder="Printer IP Address"
-        value={printerIPAddress}
-        onChange={(e) => setPrinterIPAddress(e.currentTarget.value)}
-      />
-      <input
-        id="printerPort"
-        placeholder="Printer Port"
-        value={printerPort}
-        onChange={(e) => setPrinterPort(e.currentTarget.value)}
-      />
-      <button
-        disabled={connectionStatus === STATUS_CONNECTED}
-        onClick={() => connect()}
-      >
-        Connect
-      </button>
-      <span className="status-label">{connectionStatus}</span>
-      <hr />
-      <textarea
-        id="textToPrint"
-        rows="3"
-        placeholder="Text to print"
-        value={textToPrint}
-        onChange={(e) => setTextToPrint(e.currentTarget.value)}
-      />
-      <button
-        disabled={connectionStatus !== STATUS_CONNECTED}
-        onClick={() => print(textToPrint)}
-      >
-        Print
-      </button>
-    </div>
+      <form className="grid grid-cols-2 gap-4" onSubmit={handleConnect}>
+        <Input
+          placeholder="Printer IP Address"
+          value={printerIPAddress}
+          onChange={(e) => setPrinterIPAddress(e.currentTarget.value)}
+        />
+        <Input
+          placeholder="Printer Port"
+          value={printerPort}
+          onChange={(e) => setPrinterPort(e.currentTarget.value)}
+        />
+        <Button
+          disabled={connectionStatus === STATUS_CONNECTED}
+          className="col-span-2"
+        >
+          Connect
+        </Button>
+      </form>
+      <p>Connection status: {connectionStatus}</p>
+      {connectionStatus === STATUS_CONNECTED && (
+        <form className="grid grid-cols-1 gap-4" onSubmit={handlePrint}>
+          <Input
+            placeholder="Text to print"
+            value={textToPrint}
+            onChange={(e) => setTextToPrint(e.currentTarget.value)}
+          />
+          <Button disabled={connectionStatus !== STATUS_CONNECTED}>
+            Print
+          </Button>
+        </form>
+      )}
     </div>
   );
 };
