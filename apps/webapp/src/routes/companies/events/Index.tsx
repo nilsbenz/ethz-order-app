@@ -1,10 +1,20 @@
-import EventsList from "@/components/companies/EventsList";
-import NewEventForm from "@/components/companies/NewEventForm";
-import useCompanyFromParams from "@/lib/hooks/useCompany";
+import TableView from "@/components/lists/TableView";
+import TableViewCell from "@/components/lists/TableViewCell";
+import { COMPANY_QUERY } from "@/lib/queries";
+import useCompanyStore from "@/lib/store/company";
+import { Company } from "@order-app/types";
 import { Loader2Icon } from "lucide-react";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 
 export default function Events() {
-  const { data: company, status } = useCompanyFromParams();
+  const { company: companyId } = useParams();
+  const { data: company, status } = useQuery<Company>({
+    queryKey: [COMPANY_QUERY, companyId],
+    enabled: false,
+  });
+
+  const events = useCompanyStore((state) => state.events);
 
   if (status === "loading") {
     return (
@@ -20,11 +30,16 @@ export default function Events() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h2 className="h1">Events</h2>
-        <NewEventForm company={company} />
-      </div>
-      <EventsList company={company} />
+      <h2 className="h1">Events</h2>
+      <TableView>
+        {events.map((event, index) => (
+          <TableViewCell
+            key={index}
+            label={event.displayName}
+            link={event.id}
+          />
+        ))}
+      </TableView>
     </div>
   );
 }

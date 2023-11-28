@@ -47,14 +47,16 @@ const navElementsSuperAdmin: NavElement[] = [
 
 function NavigationElement({ element }: { element: NavElement }) {
   const location = useLocation();
+  const userData = useAuthStore((state) => state.userData);
 
   const isActive =
     location.pathname === element.path ||
     (location.pathname.startsWith(`${element.path}/`) &&
-      !(
-        !element.path.includes(SubPage.Events) &&
-        location.pathname.includes(SubPage.Events)
-      ));
+      (userData?.level === UserLevel.SuperAdmin ||
+        !(
+          !element.path.includes(SubPage.Events) &&
+          location.pathname.includes(SubPage.Events)
+        )));
   const Icon = element.icon;
 
   return (
@@ -67,9 +69,7 @@ function NavigationElement({ element }: { element: NavElement }) {
           className={cn(
             "flex flex-col items-center gap-y-[3px] text-sm transition-colors",
             "lg:flex-row lg:gap-x-3.5 lg:pl-3 lg:text-base",
-            isActive
-              ? "font-medium text-card-foreground"
-              : "text-muted-foreground"
+            isActive ? "font-medium text-foreground" : "text-muted-foreground"
           )}
         >
           <Icon className="h-6 w-6" strokeWidth={isActive ? 2.25 : 2} />
@@ -104,8 +104,8 @@ function Navigation() {
     <>
       <nav
         className={cn(
-          "fixed bottom-0 left-0 right-0 top-auto z-30 border-t border-border bg-card/80 px-4 pl-[env(safe-area-inset-left,_0px)] pr-[env(safe-area-inset-right,_0px)] backdrop-blur transition-colors dark:max-sm:bg-muted/80",
-          "sm:right-auto sm:top-0 sm:z-auto sm:border-r sm:border-t-0 sm:pr-0 sm:pt-[calc(calc(env(safe-area-inset-top,_0px)_+_5rem))]"
+          "fixed bottom-0 left-0 right-0 top-auto z-30 border-t border-border bg-background/80 pl-[calc(env(safe-area-inset-left,_0px)_+_1rem)] pr-[calc(env(safe-area-inset-right,_0px)_+_1rem)] backdrop-blur transition-colors dark:max-sm:bg-card/80",
+          "sm:right-auto sm:top-0 sm:z-auto sm:border-r sm:border-t-0 sm:pl-[env(safe-area-inset-left,_0px)] sm:pr-0 sm:pt-[calc(calc(env(safe-area-inset-top,_0px)_+_5rem))]"
         )}
         style={{
           paddingBottom: safeAreaHeight,

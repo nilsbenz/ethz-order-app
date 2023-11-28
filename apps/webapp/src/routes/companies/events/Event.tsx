@@ -1,10 +1,8 @@
-import ActionsListItem from "@/components/events/ActionsListItem";
-import { Collection } from "@/lib/collections";
-import { db } from "@/lib/firebase";
-import { eventConverter } from "@/lib/model/companies";
+import TableView from "@/components/lists/TableView";
+import TableViewCell from "@/components/lists/TableViewCell";
 import { SubPage } from "@/lib/pages";
 import { EVENT_QUERY } from "@/lib/queries";
-import { doc, getDoc } from "firebase/firestore";
+import { Event as EventType } from "@order-app/types";
 import { Loader2Icon } from "lucide-react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -15,17 +13,9 @@ const actions = [
 
 export default function Event() {
   const { event: eventId } = useParams();
-
-  const { data: event, status } = useQuery({
+  const { data: event, status } = useQuery<EventType>({
     queryKey: [EVENT_QUERY, eventId],
-    queryFn: async () => {
-      if (eventId) {
-        const res = await getDoc(
-          doc(db, Collection.Events, eventId).withConverter(eventConverter)
-        );
-        return res.data();
-      }
-    },
+    enabled: false,
   });
 
   if (status === "loading") {
@@ -43,11 +33,11 @@ export default function Event() {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="h1">{event.displayName}</h2>
-      <div className="flex flex-col divide-y">
+      <TableView>
         {actions.map((action, index) => (
-          <ActionsListItem key={index} {...action} />
+          <TableViewCell key={index} {...action} />
         ))}
-      </div>
+      </TableView>
     </div>
   );
 }

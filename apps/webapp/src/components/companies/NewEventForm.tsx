@@ -1,7 +1,8 @@
 import { Collection, generateId } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { eventConverter } from "@/lib/model/companies";
-import { Company, Event } from "@order-app/types";
+import useCompanyStore from "@/lib/store/company";
+import { Event } from "@order-app/types";
 import {
   Button,
   Dialog,
@@ -17,7 +18,8 @@ import { doc, setDoc } from "firebase/firestore";
 import { PlusIcon } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 
-export default function NewEventForm({ company }: { company: Company }) {
+export default function NewEventForm() {
+  const company = useCompanyStore((state) => state.company);
   const [openDialog, setOpenDialog] = useState(false);
   const [formState, setFormState] = useState<"idle" | "busy">("idle");
   const displayNameInput = useRef<HTMLInputElement>(null);
@@ -33,7 +35,7 @@ export default function NewEventForm({ company }: { company: Company }) {
       const id = await generateId(Collection.Events, 8);
       const newEvent: Event = {
         id,
-        companyId: company.id,
+        companyId: company?.id ?? "",
         displayName,
         waiters: [],
         articleCategories: [],

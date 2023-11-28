@@ -24,7 +24,7 @@ function Header() {
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-30 border-b border-border bg-muted/80 text-foreground backdrop-blur transition-colors dark:bg-card/80"
+        className="fixed left-0 right-0 top-0 z-30 border-b border-border bg-card/80 text-foreground backdrop-blur transition-colors dark:bg-background/80"
         style={{
           paddingTop: safeAreaHeight,
           paddingLeft: "calc(env(safe-area-inset-left, 0px) + 0.5rem)",

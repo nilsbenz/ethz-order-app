@@ -25,6 +25,7 @@ import {
 import { Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import TableView from "../lists/TableView";
 
 export default function CompaniesList() {
   const user = useAuthStore((state) => state.user);
@@ -59,7 +60,7 @@ export default function CompaniesList() {
   }, [user?.uid]);
 
   return (
-    <div className="flex flex-col divide-y">
+    <TableView>
       {companies?.map((company) => (
         <div key={company.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow">
@@ -99,6 +100,6 @@ export default function CompaniesList() {
           </Dialog>
         </div>
       ))}
-    </div>
+    </TableView>
   );
 }

@@ -24,6 +24,7 @@ import {
 import { httpsCallable } from "firebase/functions";
 import { Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import TableView from "../lists/TableView";
 
 export default function SuperAdminsList() {
   const user = useAuthStore((state) => state.user);
@@ -62,7 +63,7 @@ export default function SuperAdminsList() {
   }, [user?.uid]);
 
   return (
-    <div className="flex flex-col divide-y">
+    <TableView>
       {superAdmins?.map((admin) => (
         <div key={admin.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">
@@ -103,6 +104,6 @@ export default function SuperAdminsList() {
           </Dialog>
         </div>
       ))}
-    </div>
+    </TableView>
   );
 }

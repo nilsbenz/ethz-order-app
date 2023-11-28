@@ -1,5 +1,5 @@
-import CompaniesList from "@/components/admin/CompaniesList";
-import NewCompanyForm from "@/components/admin/NewCompanyForm";
+import CompaniesList from "@/components/companies/CompaniesList";
+import NewCompanyForm from "@/components/companies/NewCompanyForm";
 
 export default function Companies() {
   return (

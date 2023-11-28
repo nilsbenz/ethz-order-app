@@ -2,8 +2,7 @@ import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { eventConverter } from "@/lib/model/companies";
 import { Page, SubPage } from "@/lib/pages";
-import useAuthStore from "@/lib/store/auth";
-import { Company, Event } from "@order-app/types";
+import useCompanyStore from "@/lib/store/company";
 import {
   Button,
   Dialog,
@@ -14,21 +13,14 @@ import {
   DialogTrigger,
 } from "@order-app/ui";
 import { DialogClose } from "@order-app/ui/src/components/dialog";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { Trash2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import TableView from "../lists/TableView";
 
-export default function EventsList({ company }: { company: Company }) {
-  const user = useAuthStore((state) => state.user);
-  const [events, setEvents] = useState<Event[]>();
+export default function EventsList() {
+  const { company, events } = useCompanyStore();
   const [busy, setBusy] = useState(false);
 
   function handleRemoveEvent(eventId: string) {
@@ -45,25 +37,13 @@ export default function EventsList({ company }: { company: Company }) {
     };
   }
 
-  useEffect(() => {
-    const eventsQuery = query(
-      collection(db, Collection.Events),
-      where("companyId", "==", company.id),
-      where("archived", "==", false)
-    ).withConverter(eventConverter);
-    const unsubscribe = onSnapshot(eventsQuery, (snapshot) =>
-      setEvents(snapshot.docs.map((d) => d.data()))
-    );
-    return unsubscribe;
-  }, [user?.uid, company.id]);
-
   return (
-    <div className="flex flex-col divide-y">
+    <TableView>
       {events?.map((event) => (
         <div key={event.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">
             <Link
-              to={`${Page.Companies}/${company.id}/${SubPage.Events}/${event.id}`}
+              to={`${Page.Companies}/${company?.id}/${SubPage.Events}/${event.id}`}
               className="-mx-1 p-1 text-inherit"
             >
               {event.displayName}
@@ -74,11 +54,7 @@ export default function EventsList({ company }: { company: Company }) {
           </p>
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                disabled={event.id === user?.uid}
-              >
+              <Button variant="ghost" size="icon">
                 <Trash2Icon />
               </Button>
             </DialogTrigger>
@@ -104,6 +80,6 @@ export default function EventsList({ company }: { company: Company }) {
           </Dialog>
         </div>
       ))}
-    </div>
+    </TableView>
   );
 }

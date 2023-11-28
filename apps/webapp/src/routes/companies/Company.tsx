@@ -2,11 +2,18 @@ import CompanyAdminsList from "@/components/companies/CompanyAdminsList";
 import EventsList from "@/components/companies/EventsList";
 import NewCompanyAdminForm from "@/components/companies/NewCompanyAdminForm";
 import NewEventForm from "@/components/companies/NewEventForm";
-import useCompanyFromParams from "@/lib/hooks/useCompany";
+import { COMPANY_QUERY } from "@/lib/queries";
+import { Company as CompanyType } from "@order-app/types";
 import { Loader2Icon } from "lucide-react";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 
 export default function Company() {
-  const { data: company, status } = useCompanyFromParams();
+  const { company: companyId } = useParams();
+  const { data: company, status } = useQuery<CompanyType>({
+    queryKey: [COMPANY_QUERY, companyId],
+    enabled: false,
+  });
 
   if (status === "loading") {
     return (
@@ -26,15 +33,15 @@ export default function Company() {
 
       <div className="flex justify-between">
         <h3 className="h2">Admins</h3>
-        <NewCompanyAdminForm company={company} />
+        <NewCompanyAdminForm />
       </div>
-      <CompanyAdminsList company={company} />
+      <CompanyAdminsList />
 
       <div className="mt-8 flex justify-between">
         <h3 className="h2">Events</h3>
-        <NewEventForm company={company} />
+        <NewEventForm />
       </div>
-      <EventsList company={company} />
+      <EventsList />
     </div>
   );
 }
