@@ -2,31 +2,11 @@ import CompanyAdminsList from "@/components/companies/CompanyAdminsList";
 import EventsList from "@/components/companies/EventsList";
 import NewCompanyAdminForm from "@/components/companies/NewCompanyAdminForm";
 import NewEventForm from "@/components/companies/NewEventForm";
-import { Collection } from "@/lib/collections";
-import { db } from "@/lib/firebase";
-import { companyConverter } from "@/lib/model/companies";
-import { COMPANY_QUERY } from "@/lib/queries";
-import { doc, getDoc } from "firebase/firestore";
+import useCompanyFromParams from "@/lib/hooks/useCompany";
 import { Loader2Icon } from "lucide-react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
 
 export default function Company() {
-  const { company: companyId } = useParams();
-
-  const { data: company, status } = useQuery({
-    queryKey: [COMPANY_QUERY, companyId],
-    queryFn: async () => {
-      if (companyId) {
-        const res = await getDoc(
-          doc(db, Collection.Companies, companyId).withConverter(
-            companyConverter
-          )
-        );
-        return res.data();
-      }
-    },
-  });
+  const { data: company, status } = useCompanyFromParams();
 
   if (status === "loading") {
     return (

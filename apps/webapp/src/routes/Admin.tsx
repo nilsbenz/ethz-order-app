@@ -15,7 +15,7 @@ export default function Admin() {
       <SuperAdminsList />
 
       <div className="mt-8 flex justify-between">
-        <h3 className="h2">Companies</h3>
+        <h3 className="h2">Vereine</h3>
         <NewCompanyForm />
       </div>
       <CompaniesList />

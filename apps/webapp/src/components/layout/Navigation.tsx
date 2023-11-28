@@ -30,13 +30,17 @@ const navElementsAdmin: NavElement[] = [
     text: "Events",
     icon: ListIcon,
   },
-  { path: `${Page.Companies}/{company}`, text: "Company", icon: LandmarkIcon },
+  {
+    path: `${Page.Companies}/{company}`,
+    text: "Verein",
+    icon: LandmarkIcon,
+  },
   { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 const navElementsSuperAdmin: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
-  { path: Page.Companies, text: "Companies", icon: LandmarkIcon },
+  { path: Page.Companies, text: "Vereine", icon: LandmarkIcon },
   { path: Page.Admin, text: "Admin", icon: ShieldIcon },
   { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];

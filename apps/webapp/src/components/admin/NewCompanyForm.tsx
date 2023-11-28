@@ -59,10 +59,10 @@ export default function NewCompanyForm() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Neue Company erstellen</DialogHeader>
+        <DialogHeader>Neuen Verein erstellen</DialogHeader>
         <form onSubmit={handleAddCompany} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="companyDisplayName">Name der Company</Label>
+            <Label htmlFor="companyDisplayName">Name des Vereins</Label>
             <Input
               id="companyDisplayName"
               ref={companyNameInput}

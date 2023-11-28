@@ -77,7 +77,7 @@ export default function CompaniesList() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>Company entfernen?</DialogHeader>
+              <DialogHeader>Verein entfernen?</DialogHeader>
               <DialogDescription>
                 Bist du dir sicher, dass du <b>{company.displayName}</b>{" "}
                 entfernen möchtest? Diese Aktion kann nicht rückgängig gemacht

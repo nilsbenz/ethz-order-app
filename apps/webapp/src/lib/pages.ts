@@ -3,7 +3,7 @@ export const Page = {
   Register: "/registrieren",
   Login: "/anmelden",
   Profile: "/profil",
-  Companies: "/companies",
+  Companies: "/vereine",
   Printers: "/drucker",
   Admin: "/admin",
 } as const;
