@@ -1,15 +1,15 @@
-import { RecordId } from "../common";
-
 export type Table = {
-  id: RecordId;
-  eventId: RecordId;
+  id: string;
   displayName: string;
   customColor: string | null;
 };
 
 export type TableConfig = {
-  eventId: RecordId;
   rowCount: number;
   colCount: number;
-  tables: (Table | null)[][];
+  tables: {
+    [row: number]: {
+      [col: number]: Table;
+    };
+  };
 };

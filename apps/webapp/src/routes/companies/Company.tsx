@@ -1,5 +1,7 @@
 import CompanyAdminsList from "@/components/companies/CompanyAdminsList";
+import EventsList from "@/components/companies/EventsList";
 import NewCompanyAdminForm from "@/components/companies/NewCompanyAdminForm";
+import NewEventForm from "@/components/companies/NewEventForm";
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { companyConverter } from "@/lib/model/companies";
@@ -47,6 +49,12 @@ export default function Company() {
         <NewCompanyAdminForm company={company} />
       </div>
       <CompanyAdminsList company={company} />
+
+      <div className="mt-8 flex justify-between">
+        <h3 className="h2">Events</h3>
+        <NewEventForm company={company} />
+      </div>
+      <EventsList company={company} />
     </div>
   );
 }

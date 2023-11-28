@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./components/App.tsx";
 import Layout from "./components/layout/Layout.tsx";
-import { Page } from "./lib/pages.ts";
+import { Page, SubPage } from "./lib/pages.ts";
 import Admin from "./routes/Admin.tsx";
 import Home from "./routes/Home.tsx";
 import Login from "./routes/Login.tsx";
@@ -15,6 +15,7 @@ import Register from "./routes/Register.tsx";
 import Company from "./routes/companies/Company.tsx";
 import Companies from "./routes/companies/Index.tsx";
 import Articles from "./routes/events/Articles.tsx";
+import Event from "./routes/events/Event.tsx";
 import Events from "./routes/events/Index.tsx";
 import "./styles/main.css";
 
@@ -28,7 +29,14 @@ const pages: {
   [Page.Login]: { element: <Login /> },
   [Page.Profile]: { element: <Profile />, protected: UserLevel.User },
   [Page.Events]: { element: <Events />, protected: UserLevel.Admin },
-  [Page.Articles]: { element: <Articles />, protected: UserLevel.Admin },
+  [`${Page.Events}/:event`]: {
+    element: <Event />,
+    protected: UserLevel.Admin,
+  },
+  [`${Page.Events}/:event/${SubPage.Articles}`]: {
+    element: <Articles />,
+    protected: UserLevel.Admin,
+  },
   [Page.Companies]: { element: <Companies />, protected: UserLevel.Admin },
   [`${Page.Companies}/:company`]: {
     element: <Company />,

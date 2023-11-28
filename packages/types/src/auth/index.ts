@@ -25,5 +25,3 @@ export type AppUser = {
   company: string | null;
   event: string | null;
 };
-
-export type DbAppUser = Omit<AppUser, "id">;

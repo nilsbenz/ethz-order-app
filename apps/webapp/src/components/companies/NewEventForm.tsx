@@ -1,7 +1,7 @@
 import { Collection, generateId } from "@/lib/collections";
 import { db } from "@/lib/firebase";
-import { companyConverter } from "@/lib/model/companies";
-import { Company } from "@order-app/types";
+import { eventConverter } from "@/lib/model/companies";
+import { Company, Event } from "@order-app/types";
 import {
   Button,
   Dialog,
@@ -17,31 +17,39 @@ import { doc, setDoc } from "firebase/firestore";
 import { PlusIcon } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 
-export default function NewCompanyForm() {
+export default function NewEventForm({ company }: { company: Company }) {
   const [openDialog, setOpenDialog] = useState(false);
-  const companyNameInput = useRef<HTMLInputElement>(null);
   const [formState, setFormState] = useState<"idle" | "busy">("idle");
+  const displayNameInput = useRef<HTMLInputElement>(null);
 
-  async function handleAddCompany(e: FormEvent<HTMLFormElement>) {
+  async function handleAddEvent(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
       setFormState("busy");
-      const displayName = companyNameInput.current?.value;
+      const displayName = displayNameInput.current?.value;
       if (!displayName) {
         throw "no displayname provided";
       }
-      const id = await generateId(Collection.Companies, 6);
-      const newCompany: Company = {
+      const id = await generateId(Collection.Events, 8);
+      const newEvent: Event = {
         id,
-        displayName: companyNameInput.current?.value,
-        admins: [],
+        companyId: company.id,
+        displayName,
+        waiters: [],
+        articleCategories: [],
+        articles: [],
+        tables: {
+          rowCount: 4,
+          colCount: 4,
+          tables: {},
+        },
         archived: false,
       };
       await setDoc(
-        doc(db, Collection.Companies, id).withConverter(companyConverter),
-        newCompany
+        doc(db, Collection.Events, id).withConverter(eventConverter),
+        newEvent
       );
-      companyNameInput.current.value = "";
+      displayNameInput.current.value = "";
       setOpenDialog(false);
     } catch (e) {
       console.log(e);
@@ -59,13 +67,13 @@ export default function NewCompanyForm() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Neue Company erstellen</DialogHeader>
-        <form onSubmit={handleAddCompany} className="flex flex-col gap-4">
+        <DialogHeader>Event hinzufügen</DialogHeader>
+        <form onSubmit={handleAddEvent} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="companyDisplayName">Name der Company</Label>
+            <Label htmlFor="eventDisplayName">Name des Events</Label>
             <Input
-              id="companyDisplayName"
-              ref={companyNameInput}
+              id="eventDisplayName"
+              ref={displayNameInput}
               className="w-full"
               disabled={formState === "busy"}
             />

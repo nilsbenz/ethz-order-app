@@ -1,15 +1,13 @@
 import { RecordId } from "../common";
 
 export type ArticleCategory = {
-  id: RecordId;
-  eventId: RecordId;
+  id: string;
   displayName: string;
   color: string;
 };
 
 export type Article = {
-  id: RecordId;
-  eventId: RecordId;
+  id: string;
   displayName: string;
   category: string;
   customColor: string | null;

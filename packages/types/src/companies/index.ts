@@ -1,3 +1,4 @@
+import { Article, ArticleCategory, TableConfig } from "..";
 import { UserId } from "../auth";
 import { RecordId } from "../common";
 
@@ -13,6 +14,10 @@ export type Event = {
   companyId: RecordId;
   displayName: string;
   waiters: Waiter[];
+  articleCategories: ArticleCategory[];
+  articles: Article[];
+  tables: TableConfig;
+  archived: boolean;
 };
 
 export type Company = {
@@ -21,5 +26,3 @@ export type Company = {
   admins: UserId[];
   archived: boolean;
 };
-
-export type DbCompany = Omit<Company, "id">;
