@@ -1,4 +1,4 @@
-import { Page } from "@/lib/pages";
+import { Page, SubPage } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import { UserLevel } from "@order-app/types";
 import { cn } from "@order-app/ui";
@@ -13,21 +13,32 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 type NavElement = {
-  path: Page;
+  path: string;
   text: string;
   icon: LucideIcon;
 };
 
 const navElementsUser: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
-  { path: Page.Events, text: "Events", icon: ListIcon },
-  { path: Page.Companies, text: "Company", icon: LandmarkIcon },
+  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
+];
+
+const navElementsAdmin: NavElement[] = [
+  { path: Page.Index, text: "Home", icon: HomeIcon },
+  {
+    path: `${Page.Companies}/{company}/${SubPage.Events}`,
+    text: "Events",
+    icon: ListIcon,
+  },
+  { path: `${Page.Companies}/{company}`, text: "Company", icon: LandmarkIcon },
   { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 const navElementsSuperAdmin: NavElement[] = [
-  ...navElementsUser,
+  { path: Page.Index, text: "Home", icon: HomeIcon },
+  { path: Page.Companies, text: "Companies", icon: LandmarkIcon },
   { path: Page.Admin, text: "Admin", icon: ShieldIcon },
+  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 function NavigationElement({ element }: { element: NavElement }) {
@@ -35,7 +46,11 @@ function NavigationElement({ element }: { element: NavElement }) {
 
   const isActive =
     location.pathname === element.path ||
-    location.pathname.startsWith(`${element.path}/`);
+    (location.pathname.startsWith(`${element.path}/`) &&
+      !(
+        !element.path.includes(SubPage.Events) &&
+        location.pathname.includes(SubPage.Events)
+      ));
   const Icon = element.icon;
 
   return (
@@ -62,17 +77,24 @@ function NavigationElement({ element }: { element: NavElement }) {
 }
 
 function Navigation() {
-  const userLevel = useAuthStore(
-    (state) => state.userData?.level ?? UserLevel.User
-  );
+  const userData = useAuthStore((state) => state.userData);
 
-  const navElements =
-    userLevel === UserLevel.SuperAdmin
+  let navElements =
+    userData?.level === UserLevel.SuperAdmin
       ? navElementsSuperAdmin
+      : userData?.level === UserLevel.Admin
+      ? navElementsAdmin
       : navElementsUser;
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1rem) - 1rem))`;
   const navHeight = "h-16";
+
+  if (userData?.level === UserLevel.Admin) {
+    navElements = navElements.map((e) => ({
+      ...e,
+      path: e.path.replace("{company}", userData.company ?? "unknown"),
+    }));
+  }
 
   return (
     <>

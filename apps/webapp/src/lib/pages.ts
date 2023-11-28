@@ -3,7 +3,6 @@ export const Page = {
   Register: "/registrieren",
   Login: "/anmelden",
   Profile: "/profil",
-  Events: "/events",
   Companies: "/companies",
   Printers: "/drucker",
   Admin: "/admin",
@@ -11,6 +10,7 @@ export const Page = {
 export type Page = (typeof Page)[keyof typeof Page];
 
 export const SubPage = {
+  Events: "events",
   Articles: "artikel",
 } as const;
 export type SubPage = (typeof SubPage)[keyof typeof SubPage];

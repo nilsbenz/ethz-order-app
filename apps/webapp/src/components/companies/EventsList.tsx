@@ -1,7 +1,7 @@
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { eventConverter } from "@/lib/model/companies";
-import { Page } from "@/lib/pages";
+import { Page, SubPage } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import { Company, Event } from "@order-app/types";
 import {
@@ -63,7 +63,7 @@ export default function EventsList({ company }: { company: Company }) {
         <div key={event.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">
             <Link
-              to={`${Page.Events}/${event.id}`}
+              to={`${Page.Companies}/${company.id}/${SubPage.Events}/${event.id}`}
               className="-mx-1 p-1 text-inherit"
             >
               {event.displayName}

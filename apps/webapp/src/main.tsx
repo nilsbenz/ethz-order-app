@@ -14,9 +14,9 @@ import Profile from "./routes/Profile.tsx";
 import Register from "./routes/Register.tsx";
 import Company from "./routes/companies/Company.tsx";
 import Companies from "./routes/companies/Index.tsx";
-import Articles from "./routes/events/Articles.tsx";
-import Event from "./routes/events/Event.tsx";
-import Events from "./routes/events/Index.tsx";
+import Articles from "./routes/companies/events/Articles.tsx";
+import Event from "./routes/companies/events/Event.tsx";
+import Events from "./routes/companies/events/Index.tsx";
 import "./styles/main.css";
 
 const queryClient = new QueryClient();
@@ -28,12 +28,15 @@ const pages: {
   [Page.Register]: { element: <Register /> },
   [Page.Login]: { element: <Login /> },
   [Page.Profile]: { element: <Profile />, protected: UserLevel.User },
-  [Page.Events]: { element: <Events />, protected: UserLevel.Admin },
-  [`${Page.Events}/:event`]: {
+  [`${Page.Companies}/:company/${SubPage.Events}`]: {
+    element: <Events />,
+    protected: UserLevel.Admin,
+  },
+  [`${Page.Companies}/:company/${SubPage.Events}/:event`]: {
     element: <Event />,
     protected: UserLevel.Admin,
   },
-  [`${Page.Events}/:event/${SubPage.Articles}`]: {
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Articles}`]: {
     element: <Articles />,
     protected: UserLevel.Admin,
   },
@@ -42,7 +45,7 @@ const pages: {
     element: <Company />,
     protected: UserLevel.Admin,
   },
-  [Page.Printers]: { element: <Printers />, protected: UserLevel.Admin },
+  [Page.Printers]: { element: <Printers /> },
   [Page.Admin]: { element: <Admin />, protected: UserLevel.SuperAdmin },
 } as const;
 

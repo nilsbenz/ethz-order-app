@@ -1,8 +1,14 @@
+import CompaniesList from "@/components/admin/CompaniesList";
+import NewCompanyForm from "@/components/admin/NewCompanyForm";
+
 export default function Companies() {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="h1">Company</h2>
-      <p>Allow the user to choose the action to do related to the company.</p>
+      <div className="mt-8 flex items-center justify-between">
+        <h2 className="h1">Companies</h2>
+        <NewCompanyForm />
+      </div>
+      <CompaniesList />
     </div>
   );
 }
