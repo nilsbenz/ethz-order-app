@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Toaster } from "sonner";
 import App from "./components/App.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import { Page, SubPage } from "./lib/pages.ts";
@@ -17,9 +18,9 @@ import Companies from "./routes/companies/Index.tsx";
 import Articles from "./routes/companies/events/Articles.tsx";
 import Event from "./routes/companies/events/Event.tsx";
 import Events from "./routes/companies/events/Index.tsx";
-import "./styles/main.css";
-import Waiters from "./routes/companies/events/Waiters.tsx";
 import JoinEvent from "./routes/companies/events/JoinEvent.tsx";
+import Waiters from "./routes/companies/events/Waiters.tsx";
+import "./styles/main.css";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,17 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <App>
         <RouterProvider router={router} />
+        <Toaster
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              toast:
+                "flex gap-2 items-center bg-muted/80 backdrop-blur text-foreground w-full rounded-lg border border-border p-4",
+              error:
+                "bg-destructive/80 text-destructive-foreground border-destructive-foreground/10",
+            },
+          }}
+        />
       </App>
     </QueryClientProvider>
   </React.StrictMode>
