@@ -2,30 +2,30 @@ import { Collection } from "@/lib/collections";
 import { db, functions } from "@/lib/firebase";
 import { appUserConverter } from "@/lib/model/users";
 import useAuthStore from "@/lib/store/auth";
-import useCompanyStore from "@/lib/store/company";
+import useEventStore from "@/lib/store/event";
 import { UserLevel } from "@order-app/types";
 import {
   Button,
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
 } from "@order-app/ui";
+import { DialogClose } from "@order-app/ui/src/components/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import TableView from "../lists/TableView";
 
-export default function CompanyAdminsList() {
+export default function WaitersList() {
   const user = useAuthStore((state) => state.user);
-  const companyAdmins = useCompanyStore((state) => state.admins);
+  const waiters = useEventStore((state) => state.waiters);
   const [busy, setBusy] = useState(false);
 
-  function handleRemoveCompanyAdmin(userId: string) {
+  function handleRemoveWaiter(userId: string) {
     return async () => {
       try {
         setBusy(true);
@@ -37,7 +37,7 @@ export default function CompanyAdminsList() {
         });
         await updateDoc(
           doc(db, Collection.Users, userId).withConverter(appUserConverter),
-          { level: UserLevel.User, company: null }
+          { level: UserLevel.User, event: null, validUntil: null }
         );
       } finally {
         setBusy(false);
@@ -47,29 +47,29 @@ export default function CompanyAdminsList() {
 
   return (
     <TableView>
-      {companyAdmins?.map((admin) => (
-        <div key={admin.id} className="flex items-center gap-2 py-1">
+      {waiters?.map((waiter) => (
+        <div key={waiter.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">
-            {admin.displayName}
+            {waiter.displayName}
           </p>
           <p className="truncate font-normal text-muted-foreground">
-            {admin.id}
+            {waiter.id}
           </p>
           <Dialog>
             <DialogTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                disabled={admin.id === user?.uid}
+                disabled={waiter.id === user?.uid}
               >
                 <Trash2Icon />
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>Super Admin entfernen?</DialogHeader>
+              <DialogHeader>Personal entfernen?</DialogHeader>
               <DialogDescription>
-                Bist du dir sicher, dass du <b>{admin.displayName}</b> entfernen
-                möchtest?
+                Bist du dir sicher, dass du <b>{waiter.displayName}</b>{" "}
+                entfernen möchtest?
               </DialogDescription>
               <DialogFooter>
                 <DialogClose asChild>
@@ -77,7 +77,7 @@ export default function CompanyAdminsList() {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={handleRemoveCompanyAdmin(admin.id)}
+                  onClick={handleRemoveWaiter(waiter.id)}
                   disabled={busy}
                 >
                   Entfernen

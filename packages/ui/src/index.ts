@@ -12,6 +12,7 @@ export {
 } from "./components/command";
 export {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,

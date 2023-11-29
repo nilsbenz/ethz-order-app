@@ -6,13 +6,13 @@ import useCompanyStore from "@/lib/store/company";
 import {
   Button,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
 } from "@order-app/ui";
-import { DialogClose } from "@order-app/ui/src/components/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";

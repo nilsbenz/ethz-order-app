@@ -30,12 +30,18 @@ export async function handleUpdateSuperAdminStatus(
   await admin.auth().setCustomUserClaims(userId, updateClaims);
 }
 
-export async function handleAssignUserToCompany(
+export async function handleAssignUserToEntity(
   {
     userId,
-    company,
+    entity,
     level,
-  }: { userId: string; company: string | null; level: number },
+    validUntil,
+  }: {
+    userId: string;
+    entity: string | null;
+    level: number;
+    validUntil?: number;
+  },
   context: functions.https.CallableContext
 ) {
   if (!context.auth) {
@@ -46,7 +52,7 @@ export async function handleAssignUserToCompany(
   }
   if (
     !context.auth.token.superadmin &&
-    (!context.auth.token.admin || context.auth.token.admin !== company)
+    (!context.auth.token.admin || context.auth.token.admin !== entity)
   ) {
     throw new functions.https.HttpsError(
       "failed-precondition",
@@ -60,7 +66,8 @@ export async function handleAssignUserToCompany(
     );
   }
   const updateClaims = {
-    [level === 5 ? "admin" : "waiter"]: company ?? undefined,
+    [level === 5 ? "admin" : "waiter"]: entity ?? undefined,
+    validUntil,
   };
   await admin.auth().setCustomUserClaims(userId, updateClaims);
 }
@@ -73,6 +80,7 @@ export async function initUserData(user: UserRecord): Promise<void> {
     level: 1,
     company: null,
     event: null,
+    validUntil: null,
   };
   admin.firestore().collection("users").doc(user.uid).set(userData);
 }

@@ -14,6 +14,7 @@ export type Claims = {
   superadmin?: boolean;
   admin?: RecordId;
   waiter?: RecordId;
+  validUntil?: number;
 };
 
 export type AppUser = {
@@ -24,4 +25,5 @@ export type AppUser = {
   level: UserLevel;
   company: string | null;
   event: string | null;
+  validUntil: number | null;
 };

@@ -7,13 +7,13 @@ import { Company } from "@order-app/types";
 import {
   Button,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
 } from "@order-app/ui";
-import { DialogClose } from "@order-app/ui/src/components/dialog";
 import {
   collection,
   doc,

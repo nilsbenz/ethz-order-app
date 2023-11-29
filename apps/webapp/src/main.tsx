@@ -18,6 +18,8 @@ import Articles from "./routes/companies/events/Articles.tsx";
 import Event from "./routes/companies/events/Event.tsx";
 import Events from "./routes/companies/events/Index.tsx";
 import "./styles/main.css";
+import Waiters from "./routes/companies/events/Waiters.tsx";
+import JoinEvent from "./routes/companies/events/JoinEvent.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,11 @@ const pages: {
   [Page.Register]: { element: <Register /> },
   [Page.Login]: { element: <Login /> },
   [Page.Profile]: { element: <Profile />, protected: UserLevel.User },
+  [Page.Companies]: { element: <Companies />, protected: UserLevel.SuperAdmin },
+  [`${Page.Companies}/:company`]: {
+    element: <Company />,
+    protected: UserLevel.Admin,
+  },
   [`${Page.Companies}/:company/${SubPage.Events}`]: {
     element: <Events />,
     protected: UserLevel.Admin,
@@ -40,10 +47,13 @@ const pages: {
     element: <Articles />,
     protected: UserLevel.Admin,
   },
-  [Page.Companies]: { element: <Companies />, protected: UserLevel.Admin },
-  [`${Page.Companies}/:company`]: {
-    element: <Company />,
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Waiters}`]: {
+    element: <Waiters />,
     protected: UserLevel.Admin,
+  },
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Join}`]: {
+    element: <JoinEvent />,
+    protected: UserLevel.User,
   },
   [Page.Printers]: { element: <Printers /> },
   [Page.Admin]: { element: <Admin />, protected: UserLevel.SuperAdmin },

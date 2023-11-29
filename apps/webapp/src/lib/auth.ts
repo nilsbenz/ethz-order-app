@@ -1,4 +1,4 @@
-import { Claims, UserLevel } from "@order-app/types";
+import { AppUser, Claims, UserLevel } from "@order-app/types";
 import { FirebaseError } from "firebase/app";
 import {
   ParsedToken,
@@ -7,8 +7,12 @@ import {
   signOut as fbSignOut,
   sendEmailVerification,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { Collection } from "./collections";
+import { auth, db } from "./firebase";
+import { appUserConverter } from "./model/users";
 
 const MESSAGES = {
   "auth/invalid-login-credentials":
@@ -102,4 +106,24 @@ export function userLevelFromClaims(claims: Claims) {
     return UserLevel.Waiter;
   }
   return UserLevel.User;
+}
+
+export async function updateUserProfile(user: Partial<AppUser>) {
+  const currentUser = auth.currentUser;
+  if (currentUser) {
+    if (user.displayName) {
+      updateProfile(currentUser, { displayName: user.displayName });
+    }
+    await updateUser(currentUser.uid, user);
+  }
+}
+
+export async function updateUser(userId: string, user: Partial<AppUser>) {
+  if (user.displayName) {
+    user.searchName = user.displayName.toLowerCase().replace(" ", "");
+  }
+  await updateDoc(
+    doc(db, Collection.Users, userId).withConverter(appUserConverter),
+    user
+  );
 }

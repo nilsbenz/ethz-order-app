@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
   deleteUserData,
-  handleAssignUserToCompany,
+  handleAssignUserToEntity,
   handleUpdateSuperAdminStatus,
   initUserData,
 } from "./auth";
@@ -15,9 +15,9 @@ export const updateSuperAdminStatus = functions
   .region(REGION)
   .https.onCall(handleUpdateSuperAdminStatus);
 
-export const assignUserToCompany = functions
+export const assignUserToEntity = functions
   .region(REGION)
-  .https.onCall(handleAssignUserToCompany);
+  .https.onCall(handleAssignUserToEntity);
 
 export const handleUserCreate = functions.auth.user().onCreate(initUserData);
 

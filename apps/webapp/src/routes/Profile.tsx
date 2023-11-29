@@ -1,17 +1,16 @@
-import { signOut } from "@/lib/auth";
-import { Collection } from "@/lib/collections";
-import { db } from "@/lib/firebase";
-import { appUserConverter } from "@/lib/model/users";
+import { signOut, updateUserProfile } from "@/lib/auth";
 import { Page } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import { Button, Input, Label } from "@order-app/ui";
-import { doc, updateDoc } from "firebase/firestore";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const userData = useAuthStore((state) => state.userData);
+  const [user, userData] = useAuthStore((state) => [
+    state.user,
+    state.userData,
+  ]);
   const displayNameInput = useRef<HTMLInputElement>(null);
   const [displayNameInputState, setDisplayNameInputState] = useState<
     "idle" | "modified" | "busy"
@@ -30,10 +29,7 @@ export default function Profile() {
     try {
       setDisplayNameInputState("busy");
       const displayName = displayNameInput.current?.value;
-      await updateDoc(
-        doc(db, Collection.Users, userData?.id).withConverter(appUserConverter),
-        { displayName, searchName: displayName?.toLowerCase().replace(" ", "") }
-      );
+      await updateUserProfile({ displayName });
     } finally {
       setDisplayNameInputState("idle");
     }
@@ -47,7 +43,16 @@ export default function Profile() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="h1">Profil</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="h1">Profil</h2>
+        <Button onClick={handleSignOutClicked} variant="destructive" size="sm">
+          Abmelden
+        </Button>
+      </div>
+      <div>
+        <p>{user?.email}</p>
+        <p className="text-muted-foreground">{user?.uid}</p>
+      </div>
       <form
         className="flex flex-col gap-4 sm:flex-row"
         onSubmit={handleSaveDisplayNameClicked}
@@ -72,10 +77,6 @@ export default function Profile() {
           </Button>
         )}
       </form>
-      <p>Allow the user to update his profile.</p>
-      <Button onClick={handleSignOutClicked} variant="destructive">
-        Ausloggen
-      </Button>
     </div>
   );
 }

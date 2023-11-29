@@ -5,6 +5,7 @@ import useEvent from "@/lib/hooks/useEvent";
 import { Page } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import useCompanyStore from "@/lib/store/company";
+import useEventStore from "@/lib/store/event";
 import { UserLevel } from "@order-app/types";
 import { Navigate, useLocation, useParams } from "react-router-dom";
 import Header from "./Header";
@@ -18,13 +19,14 @@ function Layout({
   children?: JSX.Element | JSX.Element[];
 }) {
   const { setCompany, setAdmins, setEvents } = useCompanyStore();
+  const { setEvent } = useEventStore();
   const user = useAuthStore((state) => state.user);
   const location = useLocation();
   const { company: companyId, event: eventId } = useParams();
   useCompany({ companyId, callback: setCompany });
   useCompanyAdmins({ companyId, callback: setAdmins });
   useCompanyEvents({ companyId, callback: setEvents });
-  useEvent({ eventId });
+  useEvent({ eventId, callback: setEvent });
 
   if (user === undefined) {
     return null;

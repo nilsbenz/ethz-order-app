@@ -4,7 +4,7 @@ import { RecordId } from "../common";
 
 export type Waiter = {
   userId: UserId;
-  enabled: boolean;
+  approved: boolean;
   checkedInAt: Date;
   disableAt: Date;
 };

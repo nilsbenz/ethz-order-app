@@ -6,12 +6,12 @@ import { AppUser, UserLevel } from "@order-app/types";
 import {
   Button,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
 } from "@order-app/ui";
-import { DialogClose } from "@order-app/ui/src/components/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { PlusIcon } from "lucide-react";
@@ -40,10 +40,10 @@ export default function NewCompanyAdminForm() {
       );
       await httpsCallable(
         functions,
-        "assignUserToCompany"
+        "assignUserToEntity"
       )({
         userId,
-        company: company?.id,
+        entity: company?.id,
         level: UserLevel.Admin,
       });
       setOpenDialog(false);
