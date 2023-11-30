@@ -19,7 +19,7 @@ export default function Events() {
   if (status === "loading") {
     return (
       <div className="grid min-h-[40vh] place-items-center">
-        <Loader2Icon className="animate-spin text-border" />
+        <Loader2Icon className="animate-spin text-border delay-200 duration-500 animate-in fade-in-0 fill-mode-backwards" />
       </div>
     );
   }
@@ -31,8 +31,8 @@ export default function Events() {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="h1">Events</h2>
-      <TableView>
-        {events.map((event, index) => (
+      <TableView loading={!events}>
+        {events?.map((event, index) => (
           <TableViewCell
             key={index}
             label={event.displayName}

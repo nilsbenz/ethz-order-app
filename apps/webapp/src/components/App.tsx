@@ -4,7 +4,7 @@ import useAuthStore from "@/lib/store/auth";
 import { Loader2Icon } from "lucide-react";
 import { useDebounce } from "usehooks-ts";
 
-export default function App({ children }: { children?: JSX.Element[] }) {
+export default function App({ children }: { children: JSX.Element[] }) {
   useUser();
   useTheme();
 
@@ -25,5 +25,5 @@ export default function App({ children }: { children?: JSX.Element[] }) {
     );
   }
 
-  return children ?? null;
+  return <>{children}</>;
 }

@@ -38,7 +38,7 @@ export default function EventsList() {
   }
 
   return (
-    <TableView>
+    <TableView loading={!events}>
       {events?.map((event) => (
         <div key={event.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">

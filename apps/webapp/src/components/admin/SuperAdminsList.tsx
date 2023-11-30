@@ -63,7 +63,7 @@ export default function SuperAdminsList() {
   }, [user?.uid]);
 
   return (
-    <TableView>
+    <TableView loading={!superAdmins}>
       {superAdmins?.map((admin) => (
         <div key={admin.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">

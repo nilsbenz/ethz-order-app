@@ -46,7 +46,7 @@ export default function CompanyAdminsList() {
   }
 
   return (
-    <TableView>
+    <TableView loading={!companyAdmins}>
       {companyAdmins?.map((admin) => (
         <div key={admin.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">

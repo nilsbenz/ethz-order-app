@@ -46,7 +46,7 @@ export default function WaitersList() {
   }
 
   return (
-    <TableView>
+    <TableView loading={!waiters}>
       {waiters?.map((waiter) => (
         <div key={waiter.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow whitespace-nowrap font-medium">

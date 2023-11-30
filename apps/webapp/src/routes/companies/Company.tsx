@@ -18,7 +18,7 @@ export default function Company() {
   if (status === "loading") {
     return (
       <div className="grid min-h-[40vh] place-items-center">
-        <Loader2Icon className="animate-spin text-border" />
+        <Loader2Icon className="animate-spin text-border delay-200 duration-500 animate-in fade-in-0 fill-mode-backwards" />
       </div>
     );
   }

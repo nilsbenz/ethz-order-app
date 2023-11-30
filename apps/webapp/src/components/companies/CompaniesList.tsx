@@ -60,7 +60,7 @@ export default function CompaniesList() {
   }, [user?.uid]);
 
   return (
-    <TableView>
+    <TableView loading={!companies}>
       {companies?.map((company) => (
         <div key={company.id} className="flex items-center gap-2 py-1">
           <p className="flex-grow">

@@ -6,7 +6,7 @@ export default function WaiterRequestsList() {
   const waiters = useEventStore((state) => state.event?.waiters);
 
   return (
-    <TableView>
+    <TableView loading={!waiters}>
       {waiters?.map((waiter) => (
         <WaiterRequestsListItem key={waiter.userId} waiter={waiter} />
       ))}

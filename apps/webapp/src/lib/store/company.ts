@@ -3,8 +3,8 @@ import { create } from "zustand";
 
 type CompanyStore = {
   company: Company | undefined;
-  events: Event[];
-  admins: AppUser[];
+  events: Event[] | undefined;
+  admins: AppUser[] | undefined;
   setCompany: (company: Company | undefined) => void;
   setEvents: (events: Event[]) => void;
   setAdmins: (admins: AppUser[]) => void;
@@ -12,8 +12,8 @@ type CompanyStore = {
 
 const useCompanyStore = create<CompanyStore>((set) => ({
   company: undefined,
-  events: [],
-  admins: [],
+  events: undefined,
+  admins: undefined,
   setCompany: (company) => set({ company }),
   setEvents: (events) => set({ events }),
   setAdmins: (admins) => set({ admins }),
