@@ -1,16 +1,27 @@
 import { RecordId } from "../common";
 
+export const ArticleColor = {
+  White: "white",
+  Red: "red",
+  Orange: "orange",
+  Yellow: "yellow",
+  Green: "green",
+  Blue: "blue",
+  Purple: "purple",
+} as const;
+export type ArticleColor = (typeof ArticleColor)[keyof typeof ArticleColor];
+
 export type ArticleCategory = {
   id: string;
   displayName: string;
-  color: string;
+  color: ArticleColor;
 };
 
 export type Article = {
   id: string;
   displayName: string;
   category: string;
-  customColor: string | null;
+  customColor: ArticleColor | null;
 };
 
 export type OutputCategoryOutput =
