@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTrigger,
   Form,
   FormControl,
   FormField,
@@ -36,7 +35,6 @@ import {
   TabsTrigger,
 } from "@order-app/ui";
 import { FieldValue, arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
@@ -76,8 +74,15 @@ const colorOptions: { [key in ArticleColor]: string } = {
   [ArticleColor.Purple]: "Violett",
 } as const;
 
-export default function AddArticleForm({ copyFrom }: { copyFrom?: Article }) {
-  const [openDialog, setOpenDialog] = useState(false);
+export default function AddArticleForm({
+  open,
+  onOpenChange,
+  copyFrom,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  copyFrom?: Article;
+}) {
   const event = useEventStore((state) => state.event);
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -89,6 +94,7 @@ export default function AddArticleForm({ copyFrom }: { copyFrom?: Article }) {
       articleColor: copyFrom?.customColor ?? "none",
     },
   });
+  const [formStatus, setFormStatus] = useState<"idle" | "busy">("idle");
 
   const addArticleMutation = useMutation({
     mutationFn: async ({
@@ -111,79 +117,82 @@ export default function AddArticleForm({ copyFrom }: { copyFrom?: Article }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [EVENT_QUERY, event?.id] });
-      setOpenDialog(false);
+      onOpenChange(false);
       form.reset();
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    let hasErrors = false;
-    if (data.categoryType === CategoryType.New) {
-      const newCategoryAlreadyExists = !!event?.articleCategories.find(
-        (c) =>
-          c.displayName.toLowerCase() === data.newCategoryName?.toLowerCase()
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      setFormStatus("busy");
+      let hasErrors = false;
+      if (data.categoryType === CategoryType.New) {
+        const newCategoryAlreadyExists = !!event?.articleCategories.find(
+          (c) =>
+            c.displayName.toLowerCase() === data.newCategoryName?.toLowerCase()
+        );
+        if (newCategoryAlreadyExists) {
+          form.setError("newCategoryName", {
+            message: "Diese Kategorie existiert bereits.",
+          });
+          hasErrors = true;
+        }
+      }
+      const articleAlreadyExists = !!event?.articles.find(
+        (a) => a.displayName.toLowerCase() === data.articleName?.toLowerCase()
       );
-      if (newCategoryAlreadyExists) {
+      if (articleAlreadyExists) {
         form.setError("newCategoryName", {
           message: "Diese Kategorie existiert bereits.",
         });
         hasErrors = true;
       }
-    }
-    const articleAlreadyExists = !!event?.articles.find(
-      (a) => a.displayName.toLowerCase() === data.articleName?.toLowerCase()
-    );
-    if (articleAlreadyExists) {
-      form.setError("newCategoryName", {
-        message: "Diese Kategorie existiert bereits.",
+      if (hasErrors) {
+        return;
+      }
+      const newCategoryId = generateId(event!.articleCategories);
+      const category =
+        data.categoryType === CategoryType.Existing
+          ? data.category
+          : newCategoryId;
+      await addArticleMutation.mutateAsync({
+        article: {
+          id: generateId(event!.articles),
+          displayName: data.articleName,
+          category,
+          customColor:
+            data.articleColor === USE_CATEGORY_COLOR
+              ? null
+              : (data.articleColor as ArticleColor),
+          enabled: true,
+          archived: false,
+        },
+        category:
+          data.categoryType === CategoryType.New
+            ? {
+                id: newCategoryId,
+                displayName: data.newCategoryName,
+                color: data.newCategoryColor as ArticleColor,
+                enabled: true,
+                archived: false,
+              }
+            : undefined,
       });
-      hasErrors = true;
+    } finally {
+      setFormStatus("idle");
     }
-    if (hasErrors) {
-      return;
-    }
-    const newCategoryId = generateId(event!.articleCategories);
-    const category =
-      data.categoryType === CategoryType.Existing
-        ? data.category
-        : newCategoryId;
-    addArticleMutation.mutate({
-      article: {
-        id: generateId(event!.articles),
-        displayName: data.articleName,
-        category,
-        customColor:
-          data.articleColor === USE_CATEGORY_COLOR
-            ? null
-            : (data.articleColor as ArticleColor),
-      },
-      category:
-        data.categoryType === CategoryType.New
-          ? {
-              id: newCategoryId,
-              displayName: data.newCategoryName,
-              color: data.newCategoryColor as ArticleColor,
-            }
-          : undefined,
-    });
   }
 
   useEffect(() => {
-    if (openDialog) {
+    if (open) {
       if (!event || event.articleCategories.length === 0) {
         form.setValue("categoryType", CategoryType.New);
       }
     }
-  }, [openDialog]);
+  }, [open]);
 
   return (
-    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogTrigger asChild>
-        <Button className="flex gap-1" size="sm" disabled={!event}>
-          Neu
-          <PlusIcon className="h-5" strokeWidth={2.25} />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>Neuen Artikel erfassen</DialogHeader>
         <Form {...form}>
@@ -342,7 +351,9 @@ export default function AddArticleForm({ copyFrom }: { copyFrom?: Article }) {
               <DialogClose asChild>
                 <Button variant="ghost">Abbrechen</Button>
               </DialogClose>
-              <Button type="submit">Speichern</Button>
+              <Button type="submit" disabled={formStatus === "busy"}>
+                Speichern
+              </Button>
             </DialogFooter>
           </form>
         </Form>

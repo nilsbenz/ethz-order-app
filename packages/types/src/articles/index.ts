@@ -15,6 +15,8 @@ export type ArticleCategory = {
   id: string;
   displayName: string;
   color: ArticleColor;
+  enabled: boolean;
+  archived: boolean;
 };
 
 export type Article = {
@@ -22,6 +24,8 @@ export type Article = {
   displayName: string;
   category: string;
   customColor: ArticleColor | null;
+  enabled: boolean;
+  archived: boolean;
 };
 
 export type OutputCategoryOutput =
