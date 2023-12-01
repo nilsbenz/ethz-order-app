@@ -1,10 +1,7 @@
-import { getDisplayColor } from "@/lib/articles";
 import useEventStore from "@/lib/store/event";
 import { Article, ArticleCategory } from "@order-app/types";
-import { cn } from "@order-app/ui";
 import { Loader2Icon } from "lucide-react";
-import TableView from "../lists/TableView";
-import ArticlesListItem from "./ArticlesListItem";
+import Category from "./Category";
 
 export default function ArticlesList() {
   const event = useEventStore((state) => state.event);
@@ -14,6 +11,7 @@ export default function ArticlesList() {
     [key: string]: { category: ArticleCategory; articles: Article[] };
   } = Object.fromEntries(
     event?.articleCategories
+      .filter((c) => !c.archived)
       .sort((a, b) => (a.displayName < b.displayName ? -1 : 1))
       .map((category) => [category.id, { category, articles: [] }]) ?? []
   );
@@ -37,25 +35,10 @@ export default function ArticlesList() {
   }
 
   return (
-    <>
-      {Object.keys(sortedArticles).map((category, index) => (
-        <div key={category} className={cn("space-y-2", index > 0 && "pt-4")}>
-          <h3 className="h2 flex items-center gap-2">
-            <div
-              className={cn(
-                "h-5 w-5 rounded border border-black/20",
-                getDisplayColor(sortedArticles[category].category.color)
-              )}
-            />
-            {sortedArticles[category].category.displayName}
-          </h3>
-          <TableView loading={!event}>
-            {sortedArticles[category].articles.map((article) => (
-              <ArticlesListItem key={article.id} article={article} />
-            ))}
-          </TableView>
-        </div>
+    <div className="space-y-8">
+      {Object.keys(sortedArticles).map((category) => (
+        <Category {...sortedArticles[category]} key={category} />
       ))}
-    </>
+    </div>
   );
 }

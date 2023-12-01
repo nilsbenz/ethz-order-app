@@ -19,7 +19,7 @@ import {
   CircleSlashIcon,
   CopyIcon,
   MoreVerticalIcon,
-  PenIcon,
+  PencilIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +27,13 @@ import { useMutation, useQueryClient } from "react-query";
 import ArticleConfirmActionDialog from "./ArticleConfirmActionDialog";
 import ArticleForm from "./ArticleForm";
 
-export default function ArticlesListItem({ article }: { article: Article }) {
+export default function ArticlesListItem({
+  article,
+  categoryDisabled,
+}: {
+  article: Article;
+  categoryDisabled?: boolean;
+}) {
   const event = useEventStore((state) => state.event);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -77,7 +83,7 @@ export default function ArticlesListItem({ article }: { article: Article }) {
         <p
           className={cn(
             "flex-grow whitespace-nowrap",
-            !article.enabled && "text-muted-foreground"
+            (categoryDisabled || !article.enabled) && "text-muted-foreground"
           )}
         >
           {article.displayName}
@@ -104,7 +110,7 @@ export default function ArticlesListItem({ article }: { article: Article }) {
               onClick={() => setOpenEditDialog(true)}
               className="cursor-pointer"
             >
-              <PenIcon className="mr-2 h-4 w-4" />
+              <PencilIcon className="mr-2 h-4 w-4" />
               Bearbeiten
             </DropdownMenuItem>
             <DropdownMenuItem

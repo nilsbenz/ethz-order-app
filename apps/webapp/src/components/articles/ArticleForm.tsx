@@ -1,4 +1,4 @@
-import { generateId } from "@/lib/articles";
+import { colorOptions, generateId } from "@/lib/articles";
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { eventConverter } from "@/lib/model/companies";
@@ -61,27 +61,17 @@ const FormSchema = z.union([
   z.object({
     categoryType: z.literal(CategoryType.Existing),
     category: z.string(),
-    articleName: z.string(),
+    articleName: z.string().min(2),
     articleColor: z.string(),
   }),
   z.object({
     categoryType: z.literal(CategoryType.New),
-    newCategoryName: z.string(),
+    newCategoryName: z.string().min(2),
     newCategoryColor: z.string(),
-    articleName: z.string(),
+    articleName: z.string().min(2),
     articleColor: z.string(),
   }),
 ]);
-
-const colorOptions: { [key in ArticleColor]: string } = {
-  [ArticleColor.White]: "Weiss",
-  [ArticleColor.Red]: "Rot",
-  [ArticleColor.Orange]: "Orange",
-  [ArticleColor.Yellow]: "Gelb",
-  [ArticleColor.Green]: "Grün",
-  [ArticleColor.Blue]: "Blau",
-  [ArticleColor.Purple]: "Violett",
-} as const;
 
 export default function ArticleForm({
   open,
@@ -112,7 +102,7 @@ export default function ArticleForm({
   const debouncedArticleName = useDebounce(articleName, 200);
   const [enableArchived, setEnableArchived] = useState<Article>();
 
-  const addArticleMutation = useMutation({
+  const articleMutation = useMutation({
     mutationFn: async ({
       addArticle,
       removeArticle,
@@ -143,10 +133,8 @@ export default function ArticleForm({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [EVENT_QUERY, event?.id] });
       onOpenChange(false);
-      form.reset();
-      setArticleName(edit?.displayName ?? copyFrom?.displayName ?? "");
+      resetForm();
     },
-    onError: (e) => console.log(e),
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -187,7 +175,7 @@ export default function ArticleForm({
         data.categoryType === CategoryType.Existing
           ? data.category
           : newCategoryId;
-      await addArticleMutation.mutateAsync({
+      await articleMutation.mutateAsync({
         addArticle: {
           id: generateId(event!.articles),
           displayName: data.articleName,
@@ -216,6 +204,11 @@ export default function ArticleForm({
     }
   }
 
+  function resetForm() {
+    form.reset();
+    setArticleName(edit?.displayName ?? copyFrom?.displayName ?? "");
+  }
+
   useEffect(() => {
     setEnableArchived(
       event?.articles
@@ -239,7 +232,13 @@ export default function ArticleForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          {edit ? `${edit.displayName} bearbeiten` : "Neuen Artikel erfassen"}
+          {edit ? (
+            <p>
+              Artikel <b>{edit.displayName}</b> bearbeiten
+            </p>
+          ) : (
+            <p>Neuen Artikel erfassen</p>
+          )}
         </DialogHeader>
         <Form {...form}>
           <form
@@ -350,53 +349,57 @@ export default function ArticleForm({
                 </Tabs>
               )}
             />
-            <FormField
-              control={form.control}
-              name="articleName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="articleName">Name des Artikels</FormLabel>
-                  <Input
-                    id="articleName"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      setArticleName(e.currentTarget.value);
-                    }}
-                    defaultValue={field.value}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="articleColor"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="articleColor">
-                    Farbe des Artikels
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger id="articleColor">
-                      <SelectValue placeholder="Farbe wählen" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={USE_CATEGORY_COLOR}>
-                        Wie Kategorie
-                      </SelectItem>
-                      {Object.keys(colorOptions).map((color) => (
-                        <SelectItem key={color} value={color}>
-                          {colorOptions[color as keyof typeof colorOptions]}
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="articleName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="articleName">
+                      Name des Artikels
+                    </FormLabel>
+                    <Input
+                      id="articleName"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setArticleName(e.currentTarget.value);
+                      }}
+                      defaultValue={field.value}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="articleColor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="articleColor">
+                      Farbe des Artikels
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger id="articleColor">
+                        <SelectValue placeholder="Farbe wählen" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={USE_CATEGORY_COLOR}>
+                          Wie Kategorie
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
+                        {Object.keys(colorOptions).map((color) => (
+                          <SelectItem key={color} value={color}>
+                            {colorOptions[color as keyof typeof colorOptions]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
             {enableArchived && (
               <p className="flex items-center gap-2">
                 <InfoIcon className="h-4 w-4" /> Dieser Artikel existiert
@@ -405,7 +408,9 @@ export default function ArticleForm({
             )}
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="ghost">Abbrechen</Button>
+                <Button variant="ghost" onClick={resetForm}>
+                  Abbrechen
+                </Button>
               </DialogClose>
               <Button type="submit" disabled={formStatus === "busy"}>
                 Speichern
