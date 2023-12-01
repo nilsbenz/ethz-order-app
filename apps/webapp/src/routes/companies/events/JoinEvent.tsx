@@ -1,3 +1,4 @@
+import JoinQrCode from "@/components/events/JoinQrCode";
 import { updateUserProfile } from "@/lib/auth";
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
@@ -7,7 +8,7 @@ import { EVENT_QUERY } from "@/lib/queries";
 import useAuthStore from "@/lib/store/auth";
 import useCompanyStore from "@/lib/store/company";
 import useEventStore from "@/lib/store/event";
-import { Waiter } from "@order-app/types";
+import { UserLevel, Waiter } from "@order-app/types";
 import { Button, Input, Label } from "@order-app/ui";
 import {
   arrayRemove,
@@ -142,10 +143,20 @@ export default function JoinEvent() {
     }
   }, [previousRequest]);
 
-  if (!company || !event) {
+  if (!company || !event || !userData) {
     return (
       <div className="grid min-h-[40vh] place-items-center">
         <Loader2Icon className="animate-spin text-border delay-200 duration-500 animate-in fade-in-0 fill-mode-backwards" />
+      </div>
+    );
+  }
+
+  if (userData.level >= UserLevel.Admin) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h2 className="h1">{company.displayName}</h2>
+        <h3 className="h2">{event.displayName}</h3>
+        <JoinQrCode />
       </div>
     );
   }

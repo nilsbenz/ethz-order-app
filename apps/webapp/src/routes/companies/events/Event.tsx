@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 const actions = [
   { label: "Artikel bearbeiten", link: SubPage.Articles },
   { label: "Personal verwalten", link: SubPage.Waiters },
+  { label: "Beitrittscode", link: SubPage.Join },
 ] as const;
 
 export default function Event() {
@@ -21,8 +22,8 @@ export default function Event() {
 
   if (status === "loading") {
     return (
-      <div className="grid min-h-[40vh] place-items-center">
-        <Loader2Icon className="animate-spin text-border delay-200 duration-500 animate-in fade-in-0 fill-mode-backwards" />
+      <div className="grid min-h-[40vh] place-items-center delay-200 duration-500 animate-in fade-in-0 fill-mode-backwards">
+        <Loader2Icon className="animate-spin text-border" />
       </div>
     );
   }
