@@ -19,15 +19,17 @@ import {
   CircleSlashIcon,
   CopyIcon,
   MoreVerticalIcon,
+  PenIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import AddArticleForm from "./AddArticleForm";
 import ArticleConfirmActionDialog from "./ArticleConfirmActionDialog";
+import ArticleForm from "./ArticleForm";
 
 export default function ArticlesListItem({ article }: { article: Article }) {
   const event = useEventStore((state) => state.event);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -80,7 +82,9 @@ export default function ArticlesListItem({ article }: { article: Article }) {
         >
           {article.displayName}
         </p>
-        {!article.enabled && <CircleSlashIcon className="w-5" />}
+        {!article.enabled && (
+          <CircleSlashIcon className="w-5 text-destructive" strokeWidth={2.5} />
+        )}
         {article.customColor && (
           <div
             className={cn(
@@ -96,6 +100,13 @@ export default function ArticlesListItem({ article }: { article: Article }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="left">
+            <DropdownMenuItem
+              onClick={() => setOpenEditDialog(true)}
+              className="cursor-pointer"
+            >
+              <PenIcon className="mr-2 h-4 w-4" />
+              Bearbeiten
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setOpenAddDialog(true)}
               className="cursor-pointer"
@@ -124,7 +135,12 @@ export default function ArticlesListItem({ article }: { article: Article }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <AddArticleForm
+      <ArticleForm
+        open={openEditDialog}
+        onOpenChange={setOpenEditDialog}
+        edit={article}
+      />
+      <ArticleForm
         open={openAddDialog}
         onOpenChange={setOpenAddDialog}
         copyFrom={article}

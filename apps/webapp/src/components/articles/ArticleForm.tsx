@@ -23,6 +23,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
   Input,
   Select,
   SelectContent,
@@ -34,10 +35,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "@order-app/ui";
-import { FieldValue, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  FieldValue,
+  arrayRemove,
+  arrayUnion,
+  doc,
+  writeBatch,
+} from "firebase/firestore";
+import { InfoIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
+import { useDebounce } from "usehooks-ts";
 import * as z from "zod";
 
 const CategoryType = {
@@ -74,13 +83,15 @@ const colorOptions: { [key in ArticleColor]: string } = {
   [ArticleColor.Purple]: "Violett",
 } as const;
 
-export default function AddArticleForm({
+export default function ArticleForm({
   open,
   onOpenChange,
+  edit,
   copyFrom,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  edit?: Article;
   copyFrom?: Article;
 }) {
   const event = useEventStore((state) => state.event);
@@ -89,37 +100,53 @@ export default function AddArticleForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       categoryType: CategoryType.Existing,
-      category: copyFrom?.category,
-      articleName: copyFrom?.displayName,
-      articleColor: copyFrom?.customColor ?? "none",
+      category: edit?.category ?? copyFrom?.category,
+      articleName: edit?.displayName ?? copyFrom?.displayName,
+      articleColor: edit?.customColor ?? copyFrom?.customColor ?? "none",
     },
   });
   const [formStatus, setFormStatus] = useState<"idle" | "busy">("idle");
+  const [articleName, setArticleName] = useState(
+    edit?.displayName ?? copyFrom?.displayName ?? ""
+  );
+  const debouncedArticleName = useDebounce(articleName, 200);
+  const [enableArchived, setEnableArchived] = useState<Article>();
 
   const addArticleMutation = useMutation({
     mutationFn: async ({
-      article,
-      category,
+      addArticle,
+      removeArticle,
+      addCategory,
     }: {
-      article: Article;
-      category?: ArticleCategory;
+      addArticle: Article;
+      removeArticle?: Article;
+      addCategory?: ArticleCategory;
     }) => {
       const categoryUpdate: Partial<{
         [key in keyof Event]: FieldValue;
-      }> = category ? { articleCategories: arrayUnion(category) } : {};
-      await updateDoc(
-        doc(db, Collection.Events, event!.id).withConverter(eventConverter),
-        {
-          articles: arrayUnion(article),
-          ...categoryUpdate,
-        }
+      }> = addCategory ? { articleCategories: arrayUnion(addCategory) } : {};
+      const eventRef = doc(db, Collection.Events, event!.id).withConverter(
+        eventConverter
       );
+      const batch = writeBatch(db);
+      if (removeArticle) {
+        batch.update(eventRef, {
+          articles: arrayRemove(removeArticle),
+        });
+      }
+      batch.update(eventRef, {
+        articles: arrayUnion(addArticle),
+        ...categoryUpdate,
+      });
+      await batch.commit();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [EVENT_QUERY, event?.id] });
       onOpenChange(false);
       form.reset();
+      setArticleName(edit?.displayName ?? copyFrom?.displayName ?? "");
     },
+    onError: (e) => console.log(e),
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -138,14 +165,19 @@ export default function AddArticleForm({
           hasErrors = true;
         }
       }
-      const articleAlreadyExists = !!event?.articles.find(
-        (a) => a.displayName.toLowerCase() === data.articleName?.toLowerCase()
-      );
-      if (articleAlreadyExists) {
-        form.setError("newCategoryName", {
-          message: "Diese Kategorie existiert bereits.",
-        });
-        hasErrors = true;
+      if (!edit) {
+        const articleAlreadyExists = !!event?.articles
+          .filter((a) => !a.archived)
+          .find(
+            (a) =>
+              a.displayName.toLowerCase() === data.articleName?.toLowerCase()
+          );
+        if (articleAlreadyExists) {
+          form.setError("articleName", {
+            message: "Dieser Artikel existiert bereits.",
+          });
+          hasErrors = true;
+        }
       }
       if (hasErrors) {
         return;
@@ -156,7 +188,7 @@ export default function AddArticleForm({
           ? data.category
           : newCategoryId;
       await addArticleMutation.mutateAsync({
-        article: {
+        addArticle: {
           id: generateId(event!.articles),
           displayName: data.articleName,
           category,
@@ -164,10 +196,11 @@ export default function AddArticleForm({
             data.articleColor === USE_CATEGORY_COLOR
               ? null
               : (data.articleColor as ArticleColor),
-          enabled: true,
-          archived: false,
+          enabled: edit?.enabled ?? true,
+          archived: edit?.archived ?? false,
         },
-        category:
+        removeArticle: enableArchived ?? edit,
+        addCategory:
           data.categoryType === CategoryType.New
             ? {
                 id: newCategoryId,
@@ -184,6 +217,17 @@ export default function AddArticleForm({
   }
 
   useEffect(() => {
+    setEnableArchived(
+      event?.articles
+        .filter((a) => a.archived)
+        .find(
+          (a) =>
+            a.displayName.toLowerCase() === debouncedArticleName.toLowerCase()
+        )
+    );
+  }, [debouncedArticleName]);
+
+  useEffect(() => {
     if (open) {
       if (!event || event.articleCategories.length === 0) {
         form.setValue("categoryType", CategoryType.New);
@@ -194,7 +238,9 @@ export default function AddArticleForm({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader>Neuen Artikel erfassen</DialogHeader>
+        <DialogHeader>
+          {edit ? `${edit.displayName} bearbeiten` : "Neuen Artikel erfassen"}
+        </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -312,9 +358,13 @@ export default function AddArticleForm({
                   <FormLabel htmlFor="articleName">Name des Artikels</FormLabel>
                   <Input
                     id="articleName"
-                    onChange={field.onChange}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setArticleName(e.currentTarget.value);
+                    }}
                     defaultValue={field.value}
                   />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -347,6 +397,12 @@ export default function AddArticleForm({
                 </FormItem>
               )}
             />
+            {enableArchived && (
+              <p className="flex items-center gap-2">
+                <InfoIcon className="h-4 w-4" /> Dieser Artikel existiert
+                bereits und wird wieder aktiviert.
+              </p>
+            )}
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="ghost">Abbrechen</Button>

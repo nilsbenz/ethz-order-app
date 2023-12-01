@@ -1,4 +1,4 @@
-import AddArticleForm from "@/components/articles/AddArticleForm";
+import ArticleForm from "@/components/articles/ArticleForm";
 import ArticlesList from "@/components/articles/ArticlesList";
 import useEventStore from "@/lib/store/event";
 import { Button } from "@order-app/ui";
@@ -26,7 +26,7 @@ export default function Articles() {
         </div>
         <ArticlesList />
       </div>
-      <AddArticleForm open={openAddDialog} onOpenChange={setOpenAddDialog} />
+      <ArticleForm open={openAddDialog} onOpenChange={setOpenAddDialog} />
     </>
   );
 }
