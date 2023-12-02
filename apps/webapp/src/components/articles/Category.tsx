@@ -125,7 +125,7 @@ export default function Category({
                 ) : (
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                 )}
-                {category.enabled ? "Ausverkauft" : "Verfügbar"}
+                {category.enabled ? "Deaktivieren" : "Aktivieren"}
               </DropdownMenuItem>
               {articles.length === 0 && (
                 <DropdownMenuItem

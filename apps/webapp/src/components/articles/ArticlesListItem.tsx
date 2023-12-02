@@ -80,6 +80,15 @@ export default function ArticlesListItem({
   return (
     <>
       <div className="flex items-center gap-2 py-1">
+        {article.customColor && (
+          <div
+            className={cn(
+              "h-5 w-5 rounded border border-black/20",
+              getDisplayColor(article.customColor),
+              (categoryDisabled || !article.enabled) && "opacity-60"
+            )}
+          />
+        )}
         <p
           className={cn(
             "flex-grow whitespace-nowrap",
@@ -91,14 +100,9 @@ export default function ArticlesListItem({
         {!article.enabled && (
           <CircleSlashIcon className="w-5 text-destructive" strokeWidth={2.5} />
         )}
-        {article.customColor && (
-          <div
-            className={cn(
-              "h-5 w-5 rounded border border-black/20",
-              getDisplayColor(article.customColor)
-            )}
-          />
-        )}
+        <p className="min-w-[3rem] text-right tabular-nums text-muted-foreground">
+          {String(article.price.toFixed(2)).replace(".00", ".–")}
+        </p>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="icon" variant="ghost">
@@ -129,7 +133,7 @@ export default function ArticlesListItem({
               ) : (
                 <CheckCircle2 className="mr-2 h-4 w-4" />
               )}
-              {article.enabled ? "Ausverkauft" : "Verfügbar"}
+              {article.enabled ? "Deaktivieren" : "Aktivieren"}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"

@@ -23,6 +23,7 @@ export type Article = {
   id: string;
   displayName: string;
   category: string;
+  price: number;
   customColor: ArticleColor | null;
   enabled: boolean;
   archived: boolean;

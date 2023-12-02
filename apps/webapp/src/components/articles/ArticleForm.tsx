@@ -30,6 +30,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Separator,
   Tabs,
   TabsContent,
   TabsList,
@@ -62,6 +63,7 @@ const FormSchema = z.union([
     categoryType: z.literal(CategoryType.Existing),
     category: z.string(),
     articleName: z.string().min(2),
+    price: z.coerce.number().multipleOf(0.05),
     articleColor: z.string(),
   }),
   z.object({
@@ -69,6 +71,7 @@ const FormSchema = z.union([
     newCategoryName: z.string().min(2),
     newCategoryColor: z.string(),
     articleName: z.string().min(2),
+    price: z.coerce.number().multipleOf(0.05),
     articleColor: z.string(),
   }),
 ]);
@@ -92,6 +95,7 @@ export default function ArticleForm({
       categoryType: CategoryType.Existing,
       category: edit?.category ?? copyFrom?.category,
       articleName: edit?.displayName ?? copyFrom?.displayName,
+      price: edit?.price ?? copyFrom?.price,
       articleColor: edit?.customColor ?? copyFrom?.customColor ?? "none",
     },
   });
@@ -180,6 +184,7 @@ export default function ArticleForm({
           id: generateId(event!.articles),
           displayName: data.articleName,
           category,
+          price: data.price,
           customColor:
             data.articleColor === USE_CATEGORY_COLOR
               ? null
@@ -349,12 +354,13 @@ export default function ArticleForm({
                 </Tabs>
               )}
             />
+            <Separator className="my-4" />
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="articleName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2">
                     <FormLabel htmlFor="articleName">
                       Name des Artikels
                     </FormLabel>
@@ -367,6 +373,22 @@ export default function ArticleForm({
                       defaultValue={field.value}
                     />
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="price">Preis des Artikels</FormLabel>
+                    <Input
+                      id="price"
+                      type="number"
+                      step={0.05}
+                      onChange={field.onChange}
+                      defaultValue={field.value}
+                    />
                   </FormItem>
                 )}
               />

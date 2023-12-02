@@ -2,8 +2,8 @@ import { Button, Input } from "@order-app/ui";
 import { FormEvent, useRef, useState } from "react";
 
 const ThermalPrinter = () => {
-  const [printerIPAddress, setPrinterIPAddress] = useState("192.168.0.121");
-  const [printerPort, setPrinterPort] = useState("8008");
+  const [printerIPAddress, setPrinterIPAddress] = useState("192.168.1.191");
+  const [printerPort, setPrinterPort] = useState("8080");
   const [textToPrint, setTextToPrint] = useState("Hello world!");
   const [connectionStatus, setConnectionStatus] = useState("Disconnected");
 
@@ -45,7 +45,7 @@ const ThermalPrinter = () => {
           }
         );
       } else {
-        setConnectionStatus("Error whilst connecting.");
+        setConnectionStatus("Error whilst connecting." + data);
         throw data;
       }
     });
