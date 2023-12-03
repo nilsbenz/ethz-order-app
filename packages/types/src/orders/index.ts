@@ -2,10 +2,8 @@ import { UserId } from "../auth";
 import { RecordId } from "../common";
 
 export type OrderItem = {
-  id: RecordId;
-  displayName: string;
+  articleId: RecordId;
   amount: number;
-  price: number;
   comment: string | null;
 };
 
@@ -14,5 +12,6 @@ export type Order = {
   eventId: RecordId;
   createdBy: UserId;
   createdAt: Date;
+  table: string;
   items: OrderItem[];
 };
