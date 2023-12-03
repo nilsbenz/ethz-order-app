@@ -20,7 +20,7 @@ type OrderStore = OrderStoreAttributes & {
   changeTable: (table: string) => void;
   updateItems: (item: OrderItem) => void;
   handleDraftApproved: () => void;
-  updatePayments: (artileId: string, amount: number) => void;
+  updatePayments: (artileId: string, change: number) => void;
   nextPayment: () => void;
 };
 
@@ -57,7 +57,7 @@ const useOrderStore = create<OrderStore>()(
         ),
       handleDraftApproved: () =>
         set((state) => (state.stage === "draft" ? { stage: "payment" } : {})),
-      updatePayments: (articleId, paid) =>
+      updatePayments: (articleId, change) =>
         set((state) => {
           if (state.stage !== "payment") {
             return {};
@@ -65,7 +65,7 @@ const useOrderStore = create<OrderStore>()(
           const newState = {
             stage: "payment",
             items: state.items.map((i) =>
-              i.articleId === articleId ? { ...i, paid } : i
+              i.articleId === articleId ? { ...i, paid: i.paid + change } : i
             ),
           };
           if (!newState.items.some((i) => i.amount > i.paid)) {

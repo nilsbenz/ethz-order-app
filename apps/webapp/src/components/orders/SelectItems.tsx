@@ -20,6 +20,7 @@ import {
 } from "@order-app/ui";
 import { addDoc, collection } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import BottomAction from "../layout/BottomAction";
 import SelectItemsCategory from "./SelectItemsCategory";
 
 function ConfirmItem({ item }: { item: OrderItem }) {
@@ -38,7 +39,7 @@ function ConfirmItem({ item }: { item: OrderItem }) {
           <span className="inline-block min-w-[1.5rem] text-right font-medium tabular-nums">
             {item.amount} x
           </span>{" "}
-          {article?.displayName}
+          {article.displayName}
         </p>
         <p className="font-medium tabular-nums">
           {(item.amount * article.price).toFixed(2).replace(".00", ".–")}
@@ -103,28 +104,28 @@ export default function SelectItems() {
         <Separator className="my-4" />
         <div className="divide-y">
           {orderState.items.map((item) => (
-            <ConfirmItem item={item} />
+            <ConfirmItem key={item.articleId} item={item} />
           ))}
         </div>
         <Separator className="my-4" />
-        <div className="flex items-end justify-between">
-          <p className="font-medium">Total</p>
-          <p className="text-xl font-medium">
-            {event.articles
-              .reduce(
-                (acc, curr) =>
-                  acc +
-                  curr.price *
-                    (orderState.items.find((i) => i.articleId === curr.id)
-                      ?.amount ?? 0),
-                0
-              )
-              .toFixed(2)
-              .replace(".00", ".–")}
-          </p>
-        </div>
-        <div className="fixed bottom-0 left-0 right-0 flex flex-col border-t border-border sm:flex-row-reverse">
-          <div className="grid h-16 flex-grow grid-cols-2 place-items-center gap-4 bg-background/80 px-4 text-center backdrop-blur">
+        <div>
+          <div className="flex items-end justify-between">
+            <p className="font-medium">Total</p>
+            <p className="text-xl font-medium">
+              {event.articles
+                .reduce(
+                  (acc, curr) =>
+                    acc +
+                    curr.price *
+                      (orderState.items.find((i) => i.articleId === curr.id)
+                        ?.amount ?? 0),
+                  0
+                )
+                .toFixed(2)
+                .replace(".00", ".–")}
+            </p>
+          </div>
+          <BottomAction className="grid-cols-2 gap-4">
             <Button
               className="ml-auto w-full sm:max-w-[12rem]"
               size="sm"
@@ -142,10 +143,8 @@ export default function SelectItems() {
             >
               Bestätigen
             </Button>
-          </div>
-          <div className="mb-[var(--safe-area-bottom)] h-[var(--nav-height)] w-full sm:h-px sm:max-w-[5rem] lg:max-w-[12rem]" />
+          </BottomAction>
         </div>
-        <div className="mb-[var(--safe-area-bottom)] mt-8 h-[var(--nav-height)] w-full sm:h-0 sm:max-w-[5rem] lg:max-w-[12rem]" />
       </>
     );
   }
@@ -195,19 +194,15 @@ export default function SelectItems() {
         <ScrollBar orientation="horizontal" className="h-1.5" />
       </ScrollArea>
       <SelectItemsCategory category={activeCategory} />
-      <div className="fixed bottom-0 left-0 right-0 flex flex-col border-t border-border sm:flex-row-reverse">
-        <div className="grid h-16 flex-grow place-items-center bg-background/80 px-4 text-center backdrop-blur">
-          <Button
-            className="w-full sm:max-w-xs"
-            size="sm"
-            onClick={() => setConfirm(true)}
-          >
-            Weiter
-          </Button>
-        </div>
-        <div className="mb-[var(--safe-area-bottom)] h-[var(--nav-height)] w-full sm:h-px sm:max-w-[5rem] lg:max-w-[12rem]" />
-      </div>
-      <div className="mb-[var(--safe-area-bottom)] mt-8 h-[var(--nav-height)] w-full sm:h-0 sm:max-w-[5rem] lg:max-w-[12rem]" />
+      <BottomAction>
+        <Button
+          className="w-full sm:max-w-xs"
+          size="sm"
+          onClick={() => setConfirm(true)}
+        >
+          Weiter
+        </Button>
+      </BottomAction>
     </>
   );
 }

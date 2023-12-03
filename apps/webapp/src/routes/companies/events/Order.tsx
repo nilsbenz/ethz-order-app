@@ -36,10 +36,16 @@ export default function Order() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="h1">Neue Bestellung</h2>
-        {stage !== "initial" && (
+        <h2 className="h1">
+          {stage === "payment"
+            ? "Bezahlung"
+            : stage === "success"
+            ? "Abgeschlossen"
+            : "Neue Bestellung"}
+        </h2>
+        {stage === "draft" && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => setOpenCancelConfirmDialog(true)}
           >

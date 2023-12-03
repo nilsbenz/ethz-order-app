@@ -1,8 +1,10 @@
 import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { useEffect } from "react";
+import Payment from "./Payment";
 import SelectItems from "./SelectItems";
 import SelectTable from "./SelectTable";
+import Success from "./Success";
 
 export default function TakeOrder() {
   const orderState = useOrderStore();
@@ -20,8 +22,8 @@ export default function TakeOrder() {
     case "draft":
       return <SelectItems />;
     case "payment":
-      return <>payment</>;
+      return <Payment />;
     case "success":
-      return <>success</>;
+      return <Success />;
   }
 }
