@@ -19,6 +19,7 @@ import Articles from "./routes/companies/events/Articles.tsx";
 import Event from "./routes/companies/events/Event.tsx";
 import Events from "./routes/companies/events/Index.tsx";
 import JoinEvent from "./routes/companies/events/JoinEvent.tsx";
+import Tables from "./routes/companies/events/Tables.tsx";
 import Waiters from "./routes/companies/events/Waiters.tsx";
 import "./styles/main.css";
 
@@ -46,6 +47,10 @@ const pages: {
   },
   [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Articles}`]: {
     element: <Articles />,
+    protected: UserLevel.Admin,
+  },
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Tables}`]: {
+    element: <Tables />,
     protected: UserLevel.Admin,
   },
   [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Waiters}`]: {

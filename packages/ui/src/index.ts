@@ -8,6 +8,7 @@ export * from "./components/label";
 export * from "./components/popover";
 export * from "./components/select";
 export * from "./components/separator";
+export * from "./components/slider";
 export * from "./components/tabs";
 
 export * from "./lib/utils";

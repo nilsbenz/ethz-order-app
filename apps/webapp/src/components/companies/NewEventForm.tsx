@@ -2,7 +2,7 @@ import { Collection, generateId } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { eventConverter } from "@/lib/model/companies";
 import useCompanyStore from "@/lib/store/company";
-import { Event } from "@order-app/types";
+import { Event, TableLabelType } from "@order-app/types";
 import {
   Button,
   Dialog,
@@ -41,9 +41,11 @@ export default function NewEventForm() {
         articleCategories: [],
         articles: [],
         tables: {
-          rowCount: 4,
           colCount: 4,
-          tables: {},
+          rowCount: 4,
+          colLabels: TableLabelType.Alphabetic,
+          rowLabels: TableLabelType.Numeric,
+          tables: [],
         },
         archived: false,
       };

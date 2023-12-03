@@ -58,7 +58,7 @@ function Header() {
               variant="ghost"
               asChild
               size="icon"
-              className="transition-none"
+              className="transition-shadow"
             >
               {user ? (
                 <Link to={Page.Profile}>
