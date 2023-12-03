@@ -1,15 +1,14 @@
 import TableView from "@/components/lists/TableView";
 import TableViewCell from "@/components/lists/TableViewCell";
-import TakeOrder from "@/components/orders/TakeOrder";
 import { SubPage } from "@/lib/pages";
 import { EVENT_QUERY } from "@/lib/queries";
-import useAuthStore from "@/lib/store/auth";
-import { Event as EventType, UserLevel } from "@order-app/types";
+import { Event as EventType } from "@order-app/types";
 import { Loader2Icon } from "lucide-react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 const actions = [
+  { label: "Neue Bestellung", link: SubPage.Order },
   { label: "Artikel bearbeiten", link: SubPage.Articles },
   { label: "Tische bearbeiten", link: SubPage.Tables },
   { label: "Personal verwalten", link: SubPage.Waiters },
@@ -18,7 +17,6 @@ const actions = [
 
 export default function Event() {
   const { event: eventId } = useParams();
-  const userData = useAuthStore((state) => state.userData);
   const { data: event, status } = useQuery<EventType>({
     queryKey: [EVENT_QUERY, eventId],
     enabled: false,
@@ -38,17 +36,12 @@ export default function Event() {
 
   return (
     <div className="flex flex-col gap-4">
-      {userData?.level === UserLevel.Admin && (
-        <>
-          <h2 className="h1">{event.displayName}</h2>
-          <TableView>
-            {actions.map((action, index) => (
-              <TableViewCell key={index} {...action} />
-            ))}
-          </TableView>
-        </>
-      )}
-      {userData?.level === UserLevel.Waiter && <TakeOrder />}
+      <h2 className="h1">{event.displayName}</h2>
+      <TableView>
+        {actions.map((action, index) => (
+          <TableViewCell key={index} {...action} />
+        ))}
+      </TableView>
     </div>
   );
 }

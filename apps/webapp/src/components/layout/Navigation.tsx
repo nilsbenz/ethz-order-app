@@ -12,6 +12,7 @@ import {
   ShieldIcon,
   ShoppingCartIcon,
 } from "lucide-react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 type NavElement = {
@@ -105,7 +106,6 @@ function Navigation() {
       : navElementsUser;
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1rem) - 1rem))`;
-  const navHeight = "h-16";
 
   if (userData?.level === UserLevel.Admin) {
     navElements = navElements.map((e) => ({
@@ -123,6 +123,17 @@ function Navigation() {
     }));
   }
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--safe-area-bottom",
+      safeAreaHeight
+    );
+    document.documentElement.style.setProperty(
+      "--safe-area-bottom",
+      safeAreaHeight
+    );
+  }, [safeAreaHeight]);
+
   return (
     <>
       <nav
@@ -134,22 +145,14 @@ function Navigation() {
           paddingBottom: safeAreaHeight,
         }}
       >
-        <ul
-          className={cn(
-            "mx-auto grid max-w-sm auto-cols-fr grid-flow-col items-center sm:w-20 sm:grid-flow-row lg:w-48 lg:gap-y-0.5 lg:pt-6",
-            navHeight
-          )}
-        >
+        <ul className="mx-auto grid h-[var(--nav-height)] max-w-sm auto-cols-fr grid-flow-col items-center sm:w-20 sm:grid-flow-row lg:w-48 lg:gap-y-0.5 lg:pt-6">
           {navElements.map((e) => (
             <NavigationElement element={e} key={e.path} />
           ))}
         </ul>
       </nav>
       <div
-        className={cn(
-          "w-full sm:h-px sm:max-w-[5rem] lg:max-w-[12rem]",
-          navHeight
-        )}
+        className="h-[var(--nav-height)] w-full sm:h-px sm:max-w-[5rem] lg:max-w-[12rem]"
         style={{
           marginBottom: safeAreaHeight,
         }}

@@ -174,7 +174,7 @@ export default function JoinEvent() {
         <>
           <p>Glückwunsch! Deine Anfrage wurde bestätigt.</p>
           <Link
-            to={`${Page.Companies}/${company.id}/${SubPage.Events}/${event.id}`}
+            to={`${Page.Companies}/${company.id}/${SubPage.Events}/${event.id}/${SubPage.Order}`}
           >
             <Button>Zum Event</Button>
           </Link>

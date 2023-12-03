@@ -54,6 +54,7 @@
 @layer base {
   :root {
     --font-sans: Rubik;
+    --nav-height: theme(height.16);
   }
   * {
     @apply border-border;

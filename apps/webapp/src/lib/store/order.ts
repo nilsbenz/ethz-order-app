@@ -40,13 +40,19 @@ const useOrderStore = create<OrderStore>()(
       updateItems: (item) =>
         set((state) =>
           state.stage === "draft"
-            ? state.items.some((i) => i.articleId === item.articleId)
-              ? {
-                  items: state.items.map((i) =>
-                    i.articleId === item.articleId ? { ...i, ...item } : i
+            ? item.amount > 0
+              ? state.items.some((i) => i.articleId === item.articleId)
+                ? {
+                    items: state.items.map((i) =>
+                      i.articleId === item.articleId ? { ...i, ...item } : i
+                    ),
+                  }
+                : { items: [...state.items, { ...item, paid: 0 }] }
+              : {
+                  items: state.items.filter(
+                    (i) => i.articleId !== item.articleId
                   ),
                 }
-              : { items: [...state.items, { ...item, paid: 0 }] }
             : {}
         ),
       handleDraftApproved: () =>

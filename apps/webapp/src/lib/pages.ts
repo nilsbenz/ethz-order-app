@@ -15,5 +15,6 @@ export const SubPage = {
   Tables: "tische",
   Waiters: "personal",
   Join: "beitreten",
+  Order: "bestellen",
 } as const;
 export type SubPage = (typeof SubPage)[keyof typeof SubPage];
