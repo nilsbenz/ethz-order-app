@@ -10,6 +10,7 @@ export const Collection = {
   Companies: "companies",
   Events: "events",
   Users: "users",
+  Orders: "orders",
 } as const;
 export type Collection = (typeof Collection)[keyof typeof Collection];
 

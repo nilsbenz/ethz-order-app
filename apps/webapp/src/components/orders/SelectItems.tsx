@@ -1,3 +1,7 @@
+import { Collection } from "@/lib/collections";
+import { db } from "@/lib/firebase";
+import { orderConverter } from "@/lib/model/orders";
+import useAuthStore from "@/lib/store/auth";
 import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { getTableLabel } from "@/lib/tables";
@@ -14,6 +18,7 @@ import {
   Separator,
   cn,
 } from "@order-app/ui";
+import { addDoc, collection } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import SelectItemsCategory from "./SelectItemsCategory";
 
@@ -44,10 +49,35 @@ function ConfirmItem({ item }: { item: OrderItem }) {
 }
 
 export default function SelectItems() {
+  const user = useAuthStore((state) => state.user!);
   const event = useEventStore((state) => state.event!);
   const orderState = useOrderStore();
   const [activeCategory, setActiveCategory] = useState("");
   const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function handleConfirm() {
+    if (orderState.stage !== "draft") {
+      return;
+    }
+    try {
+      setBusy(true);
+      await addDoc(
+        collection(db, Collection.Orders).withConverter(orderConverter),
+        {
+          id: "",
+          eventId: event.id,
+          createdBy: user.uid,
+          createdAt: new Date(),
+          table: orderState.table,
+          items: orderState.items,
+        }
+      );
+      orderState.handleDraftApproved();
+    } finally {
+      setBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (
@@ -100,13 +130,15 @@ export default function SelectItems() {
               size="sm"
               onClick={() => setConfirm(false)}
               variant="secondary"
+              disabled={busy}
             >
               Zurück
             </Button>
             <Button
               className="mr-auto w-full sm:max-w-[12rem]"
               size="sm"
-              onClick={orderState.handleDraftApproved}
+              onClick={handleConfirm}
+              disabled={busy}
             >
               Bestätigen
             </Button>
