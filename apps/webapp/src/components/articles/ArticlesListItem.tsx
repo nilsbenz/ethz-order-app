@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import ArticleConfirmActionDialog from "./ArticleConfirmActionDialog";
+import ConfirmActionDialog from "../common/ConfirmActionDialog";
 import ArticleForm from "./ArticleForm";
 
 export default function ArticlesListItem({
@@ -60,6 +60,7 @@ export default function ArticlesListItem({
     try {
       setBusy(true);
       await updateArticleMutation.mutateAsync({ ...article, archived: true });
+      setOpenRemoveDialog(false);
     } finally {
       setBusy(false);
     }
@@ -155,7 +156,7 @@ export default function ArticlesListItem({
         onOpenChange={setOpenAddDialog}
         copyFrom={article}
       />
-      <ArticleConfirmActionDialog
+      <ConfirmActionDialog
         open={openRemoveDialog}
         onOpenChange={setOpenRemoveDialog}
         heading="Artikel entfernen?"
@@ -165,7 +166,7 @@ export default function ArticlesListItem({
       >
         Bist du dir sicher, dass du <b>{article.displayName}</b> entfernen
         möchtest?
-      </ArticleConfirmActionDialog>
+      </ConfirmActionDialog>
     </>
   );
 }

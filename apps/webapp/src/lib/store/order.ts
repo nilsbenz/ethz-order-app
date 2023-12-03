@@ -16,6 +16,8 @@ type OrderStoreAttributes =
 
 type OrderStore = OrderStoreAttributes & {
   createNewOrder: (eventId: string, table: string) => void;
+  cancelOrder: () => void;
+  changeTable: (table: string) => void;
   updateItems: (item: OrderItem) => void;
   handleDraftApproved: () => void;
   updatePayments: (artileId: string, amount: number) => void;
@@ -32,6 +34,9 @@ const useOrderStore = create<OrderStore>()(
             ? { stage: "draft", eventId, table, items: [] }
             : {}
         ),
+      cancelOrder: () => set({ stage: "initial" }),
+      changeTable: (table) =>
+        set((state) => (state.stage === "draft" ? { table } : {})),
       updateItems: (item) =>
         set((state) =>
           state.stage === "draft"
@@ -63,9 +68,8 @@ const useOrderStore = create<OrderStore>()(
           return newState;
         }),
       nextPayment: () =>
-        set(
-          (state) => (state.stage === "success" ? { stage: "initial" } : state),
-          true
+        set((state) =>
+          state.stage === "success" ? { stage: "initial" } : state
         ),
     }),
     {

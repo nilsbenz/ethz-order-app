@@ -9,7 +9,7 @@ import {
 } from "@order-app/ui";
 import { ReactNode } from "react";
 
-export default function ArticleConfirmActionDialog({
+export default function ConfirmActionDialog({
   open,
   onOpenChange,
   heading,

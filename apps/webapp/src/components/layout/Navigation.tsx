@@ -1,5 +1,6 @@
 import { Page, SubPage } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
+import useEventStore from "@/lib/store/event";
 import { UserLevel } from "@order-app/types";
 import { cn } from "@order-app/ui";
 import {
@@ -9,6 +10,7 @@ import {
   LucideIcon,
   PrinterIcon,
   ShieldIcon,
+  ShoppingCartIcon,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -21,6 +23,15 @@ type NavElement = {
 const navElementsUser: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
   { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
+];
+
+const navElementsWaiter: NavElement[] = [
+  { path: Page.Index, text: "Home", icon: HomeIcon },
+  {
+    path: `${Page.Companies}/{company}/${SubPage.Events}/{event}`,
+    text: "Bestellung",
+    icon: ShoppingCartIcon,
+  },
 ];
 
 const navElementsAdmin: NavElement[] = [
@@ -82,12 +93,15 @@ function NavigationElement({ element }: { element: NavElement }) {
 
 function Navigation() {
   const userData = useAuthStore((state) => state.userData);
+  const event = useEventStore((state) => state.event);
 
   let navElements =
     userData?.level === UserLevel.SuperAdmin
       ? navElementsSuperAdmin
       : userData?.level === UserLevel.Admin
       ? navElementsAdmin
+      : userData?.level === UserLevel.Waiter
+      ? navElementsWaiter
       : navElementsUser;
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-bottom, 1rem) - 1rem))`;
@@ -97,6 +111,15 @@ function Navigation() {
     navElements = navElements.map((e) => ({
       ...e,
       path: e.path.replace("{company}", userData.company ?? "unknown"),
+    }));
+  }
+
+  if (userData?.level === UserLevel.Waiter) {
+    navElements = navElements.map((e) => ({
+      ...e,
+      path: e.path
+        .replace("{company}", event?.companyId ?? "unknown")
+        .replace("{event}", event?.id ?? "unknown"),
     }));
   }
 

@@ -196,6 +196,7 @@ export default function JoinEvent() {
                 }}
                 disabled={formState === "busy"}
                 required
+                className="w-full"
               />
             </div>
             <Button disabled={formState !== "modified"}>

@@ -23,8 +23,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import ConfirmActionDialog from "../common/ConfirmActionDialog";
 import TableView from "../lists/TableView";
-import ArticleConfirmActionDialog from "./ArticleConfirmActionDialog";
 import ArticlesListItem from "./ArticlesListItem";
 import EditCategory from "./EditCategory";
 
@@ -154,7 +154,7 @@ export default function Category({
         onOpenChange={() => setOpenEditDialog(false)}
         category={category}
       />
-      <ArticleConfirmActionDialog
+      <ConfirmActionDialog
         open={openRemoveDialog}
         onOpenChange={setOpenRemoveDialog}
         heading="Kategorie entfernen?"
@@ -164,7 +164,7 @@ export default function Category({
       >
         Bist du dir sicher, dass du <b>{category.displayName}</b> entfernen
         möchtest?
-      </ArticleConfirmActionDialog>
+      </ConfirmActionDialog>
     </>
   );
 }
