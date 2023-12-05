@@ -43,7 +43,7 @@ function Header() {
               className="flex items-center gap-2 pl-2 pr-2 transition-none"
             >
               <CloudIcon className="h-8 w-8" strokeWidth={2.25} />
-              <h1 className="text-xl font-medium">bstell.online</h1>
+              <h1 className="text-xl font-medium">Bstell online</h1>
             </Link>
           </Button>
           <div className="flex items-center gap-1">

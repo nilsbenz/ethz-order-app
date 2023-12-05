@@ -18,9 +18,9 @@ export default defineConfig({
         "assets/rubik/*.ttf",
       ],
       manifest: {
-        name: "bstell.online",
-        short_name: "bstell",
-        description: "bstell.online",
+        name: "Bstell online",
+        short_name: "Bstell online",
+        description: "Bstell online",
         display: "standalone",
         orientation: "portrait",
         start_url: ".",
