@@ -5,7 +5,7 @@ import useAuthStore from "@/lib/store/auth";
 import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { getTableLabel } from "@/lib/tables";
-import { OrderItem } from "@order-app/types";
+import { OrderItem, OrderStatus } from "@order-app/types";
 import {
   Button,
   ScrollArea,
@@ -67,6 +67,7 @@ export default function SelectItems() {
         collection(db, Collection.Orders).withConverter(orderConverter),
         {
           id: "",
+          status: OrderStatus.Confirmed,
           eventId: event.id,
           createdBy: user.uid,
           createdAt: new Date(),

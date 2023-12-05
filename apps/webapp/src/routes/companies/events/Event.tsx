@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 
 const actions = [
   { label: "Neue Bestellung", link: SubPage.Order },
+  { label: "Bestellungen anzeigen", link: SubPage.Orders },
   { label: "Artikel bearbeiten", link: SubPage.Articles },
   { label: "Tische bearbeiten", link: SubPage.Tables },
   { label: "Personal verwalten", link: SubPage.Waiters },

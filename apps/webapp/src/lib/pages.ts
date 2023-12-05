@@ -11,6 +11,7 @@ export type Page = (typeof Page)[keyof typeof Page];
 
 export const SubPage = {
   Events: "events",
+  Orders: "bestellungen",
   Articles: "artikel",
   Tables: "tische",
   Waiters: "personal",

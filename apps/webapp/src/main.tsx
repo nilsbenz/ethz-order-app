@@ -20,6 +20,7 @@ import Event from "./routes/companies/events/Event.tsx";
 import Events from "./routes/companies/events/Index.tsx";
 import JoinEvent from "./routes/companies/events/JoinEvent.tsx";
 import Order from "./routes/companies/events/Order.tsx";
+import Orders from "./routes/companies/events/Orders.tsx";
 import Tables from "./routes/companies/events/Tables.tsx";
 import Waiters from "./routes/companies/events/Waiters.tsx";
 import "./styles/main.css";
@@ -44,6 +45,10 @@ const pages: {
   },
   [`${Page.Companies}/:company/${SubPage.Events}/:event`]: {
     element: <Event />,
+    protected: UserLevel.Admin,
+  },
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Orders}`]: {
+    element: <Orders />,
     protected: UserLevel.Admin,
   },
   [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Articles}`]: {

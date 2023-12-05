@@ -32,10 +32,7 @@ type EPOSPrinter = {
   addTextAlign: () => EPOSPrinter;
   addText: (data: string) => EPOSPrinter;
   addTextFont: (font: EPOSFont) => EPOSPrinter;
-  addTextSize: (
-    width: EPOSTextSize | undefined,
-    height: EPOSTextSize | undefined
-  ) => EPOSPrinter;
+  addTextSize: (width?: EPOSTextSize, height?: EPOSTextSize) => EPOSPrinter;
   addTextPosition: (x: number) => EPOSPrinter;
   addTextVPosition: (y: number) => EPOSPrinter;
   /**
@@ -58,9 +55,9 @@ type EPOSPrinter = {
   addHLine: (
     startPos: number,
     endPos: number,
-    style: EPOSLineStyle | undefined
+    style?: EPOSLineStyle
   ) => EPOSPrinter;
-  addCut: (type: EPOSCutType | undefined) => EPOSPrinter;
+  addCut: (type?: EPOSCutType) => EPOSPrinter;
   addLayout: (
     type: EPOSLayoutType,
     width: number,
