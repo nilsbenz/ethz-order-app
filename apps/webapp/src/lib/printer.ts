@@ -16,7 +16,7 @@ export async function printOrder(
   ).data();
 
   printer.addFeedLine(4);
-  printer.addTextSize(5, 5);
+  printer.addTextSize(3, 3);
   printer.addTextStyle(false, false, true, undefined);
   printer.addText(`Tisch: ${order.table}`);
   printer.addFeed();
@@ -24,8 +24,7 @@ export async function printOrder(
   printer.addText(waiter?.displayName ?? "Unbekannte Servierdüse");
   printer.addFeed();
   printer.addText(new Date(order.createdAt).toLocaleString("ch-de"));
-  printer.addFeed();
-  printer.addHLine(5, 15, undefined);
+  printer.addFeedLine(4);
   printer.addTextStyle(false, false, false, undefined);
   order.items.forEach((item) => {
     printer.addTextSize(2, 2);
