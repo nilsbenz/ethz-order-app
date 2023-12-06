@@ -22,6 +22,7 @@ import JoinEvent from "./routes/companies/events/JoinEvent.tsx";
 import Order from "./routes/companies/events/Order.tsx";
 import Orders from "./routes/companies/events/Orders.tsx";
 import Tables from "./routes/companies/events/Tables.tsx";
+import Visualizations from "./routes/companies/events/Visualizations.tsx";
 import Waiters from "./routes/companies/events/Waiters.tsx";
 import "./styles/main.css";
 
@@ -63,6 +64,11 @@ const pages: {
     element: <Waiters />,
     protected: UserLevel.Admin,
   },
+  [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Visualizations}`]:
+    {
+      element: <Visualizations />,
+      protected: UserLevel.Admin,
+    },
   [`${Page.Companies}/:company/${SubPage.Events}/:event/${SubPage.Join}`]: {
     element: <JoinEvent />,
     protected: UserLevel.User,

@@ -15,6 +15,7 @@ export const SubPage = {
   Articles: "artikel",
   Tables: "tische",
   Waiters: "personal",
+  Visualizations: "auswertungen",
   Join: "beitreten",
   Order: "bestellen",
 } as const;

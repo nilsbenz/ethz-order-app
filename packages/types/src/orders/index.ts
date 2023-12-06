@@ -12,6 +12,7 @@ export type OrderItem = {
   articleId: RecordId;
   amount: number;
   comment: string | null;
+  printed: boolean;
 };
 
 export type Order = {

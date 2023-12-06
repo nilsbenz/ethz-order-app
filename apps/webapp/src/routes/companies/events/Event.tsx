@@ -13,6 +13,7 @@ const actions = [
   { label: "Artikel bearbeiten", link: SubPage.Articles },
   { label: "Tische bearbeiten", link: SubPage.Tables },
   { label: "Personal verwalten", link: SubPage.Waiters },
+  { label: "Auswertungen", link: SubPage.Visualizations },
   { label: "Beitrittscode", link: SubPage.Join },
 ] as const;
 
