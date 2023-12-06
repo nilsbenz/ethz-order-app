@@ -10,7 +10,6 @@ import { Page, SubPage } from "./lib/pages.ts";
 import Admin from "./routes/Admin.tsx";
 import Home from "./routes/Home.tsx";
 import Login from "./routes/Login.tsx";
-import Printers from "./routes/Printers.tsx";
 import Profile from "./routes/Profile.tsx";
 import Register from "./routes/Register.tsx";
 import Company from "./routes/companies/Company.tsx";
@@ -77,7 +76,6 @@ const pages: {
     element: <Order />,
     protected: UserLevel.Waiter,
   },
-  [Page.Printers]: { element: <Printers /> },
   [Page.Admin]: { element: <Admin />, protected: UserLevel.SuperAdmin },
 } as const;
 

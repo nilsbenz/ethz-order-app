@@ -5,7 +5,7 @@ import { orderConverter } from "@/lib/model/orders";
 import { EVENT_QUERY } from "@/lib/queries";
 import useEventStore from "@/lib/store/event";
 import { Order, OrderStatus } from "@order-app/types";
-import { Button, Input, Separator } from "@order-app/ui";
+import { Button, Checkbox, Input, Label, Separator } from "@order-app/ui";
 import {
   collection,
   doc,
@@ -32,14 +32,14 @@ export default function Orders() {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
 
   const [printerIPAddress, setPrinterIPAddress] = useState("192.168.1.192");
-  const [printerPort, setPrinterPort] = useState("8043");
+  const [secure, setSecure] = useState(true);
 
   const { printer, connectionStatus, connect } = usePrinter();
 
   function handleConnect(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    connect(printerIPAddress, printerPort);
+    connect(printerIPAddress, secure);
   }
 
   function handlePrint() {
@@ -63,7 +63,7 @@ export default function Orders() {
       }
     });
     prn.addFeedLine(3);
-    prn.addCut("CUT_FEED");
+    prn.addCut(prn.CUT_FEED);
 
     prn.send();
   }
@@ -121,11 +121,14 @@ export default function Orders() {
           value={printerIPAddress}
           onChange={(e) => setPrinterIPAddress(e.currentTarget.value)}
         />
-        <Input
-          placeholder="Printer Port"
-          value={printerPort}
-          onChange={(e) => setPrinterPort(e.currentTarget.value)}
-        />
+        <div className="flex items-center gap-2">
+          <Label htmlFor="secure">Secure</Label>
+          <Checkbox
+            id="secure"
+            checked={secure}
+            onCheckedChange={(c) => setSecure(c === true)}
+          />
+        </div>
         <Button
           disabled={connectionStatus === "Connected"}
           className="col-span-2"

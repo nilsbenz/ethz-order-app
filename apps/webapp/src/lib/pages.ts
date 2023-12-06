@@ -4,7 +4,6 @@ export const Page = {
   Login: "/anmelden",
   Profile: "/profil",
   Companies: "/vereine",
-  Printers: "/drucker",
   Admin: "/admin",
 } as const;
 export type Page = (typeof Page)[keyof typeof Page];

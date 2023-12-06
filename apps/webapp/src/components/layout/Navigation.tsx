@@ -8,7 +8,6 @@ import {
   LandmarkIcon,
   ListIcon,
   LucideIcon,
-  PrinterIcon,
   ShieldIcon,
   ShoppingCartIcon,
 } from "lucide-react";
@@ -23,13 +22,12 @@ type NavElement = {
 
 const navElementsUser: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
-  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 const navElementsWaiter: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
   {
-    path: `${Page.Companies}/{company}/${SubPage.Events}/{event}`,
+    path: `${Page.Companies}/{company}/${SubPage.Events}/{event}/${SubPage.Order}`,
     text: "Bestellung",
     icon: ShoppingCartIcon,
   },
@@ -47,14 +45,12 @@ const navElementsAdmin: NavElement[] = [
     text: "Verein",
     icon: LandmarkIcon,
   },
-  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 const navElementsSuperAdmin: NavElement[] = [
   { path: Page.Index, text: "Home", icon: HomeIcon },
   { path: Page.Companies, text: "Vereine", icon: LandmarkIcon },
   { path: Page.Admin, text: "Admin", icon: ShieldIcon },
-  { path: Page.Printers, text: "Drucker", icon: PrinterIcon },
 ];
 
 function NavigationElement({ element }: { element: NavElement }) {

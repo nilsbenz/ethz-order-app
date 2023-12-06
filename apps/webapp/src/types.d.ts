@@ -15,13 +15,7 @@ type EPOSLineStyle =
   | "LINE_THIN_DOUBLE"
   | "LINE_MEDIUM_DOUBLE"
   | "LINE_THICK_DOUBLE";
-type EPOSCutType =
-  | "CUT_NO_FEED"
-  | "CUT_FEED"
-  | "CUT_RESERVE"
-  | "FULL_CUT_NO_FEED"
-  | "FULL_CUT_FEED"
-  | "FULL_CUT_RESERVE";
+type EPOSCutType = "feed" | "no_feed";
 type EPOSLayoutType =
   | "LAYOUT_RECEIPT"
   | "LAYOUT_RECEIPT_BM"
@@ -91,6 +85,9 @@ type EPOSPrinter = {
   ondraweropen: () => void;
   onbatteryok: () => void;
   onbatterylow: () => void;
+
+  CUT_FEED: "feed";
+  CUT_NO_FEED: "no_feed";
 };
 
 type EPOSDeviceConnectStatus =
@@ -98,7 +95,7 @@ type EPOSDeviceConnectStatus =
   | "SSL_CONNECT_OK"
   | "ERROR_TIMEOUT"
   | "ERROR_PARAMETER";
-type EPOSDeviceType = "DEVICE_TYPE_PRINTER";
+type EPOSDeviceType = "type_printer";
 type EPOSDeviceCreateStatus =
   | "OK"
   | "DEVICE_NOT_FOUND"
@@ -117,7 +114,7 @@ type EPOSDevice = {
   new (): EPOSDevice;
   connect: (
     ipAddress: string,
-    port: string,
+    port: string | number,
     callback: (status: EPOSDeviceConnectStatus) => void
   ) => void;
   disconnect: () => void;
@@ -137,6 +134,10 @@ type EPOSDevice = {
   ondisconnect: unknown;
 
   current: EPOSPrinter;
+
+  DEVICE_TYPE_PRINTER: "type_printer";
+  IFPORT_EPOSDEVICE: 8008;
+  IFPORT_EPOSDEVICE_S: 8043;
 };
 
 interface Window {
