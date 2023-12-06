@@ -32,7 +32,7 @@ function ListItem({ article }: { article: Article }) {
           <Button
             size="icon"
             variant="ghost"
-            className="mr-2 h-8 w-8"
+            className="mr-2 flex-shrink-0"
             onClick={() => setShowCommentInput(true)}
           >
             <PencilIcon className="w-5" />
@@ -41,22 +41,22 @@ function ListItem({ article }: { article: Article }) {
         <Button
           size="icon"
           variant="outline"
-          className="h-8 w-8"
+          className="flex-shrink-0"
           onClick={handleChangeAmount(-1)}
           disabled={!item || item.amount === 0}
         >
-          <MinusIcon className="w-5" />
+          <MinusIcon />
         </Button>
-        <p className="w-9 text-center font-medium tabular-nums">
+        <p className="w-9 flex-shrink-0 text-center font-medium tabular-nums">
           {item?.amount ?? 0}
         </p>
         <Button
           size="icon"
           variant="outline"
-          className="h-8 w-8"
+          className="flex-shrink-0"
           onClick={handleChangeAmount(1)}
         >
-          <PlusIcon className="w-5" />
+          <PlusIcon />
         </Button>
       </div>
       {(showCommentInput || item?.comment) && (

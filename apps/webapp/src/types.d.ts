@@ -27,6 +27,12 @@ type EPOSPrinter = {
   addText: (data: string) => EPOSPrinter;
   addTextFont: (font: EPOSFont) => EPOSPrinter;
   addTextSize: (width?: EPOSTextSize, height?: EPOSTextSize) => EPOSPrinter;
+  addTextStyle: (
+    reverse: boolean | undefined,
+    underscore: boolean | undefined,
+    bold: boolean | undefined,
+    color: string | undefined
+  ) => EPOSPrinter;
   addTextPosition: (x: number) => EPOSPrinter;
   addTextVPosition: (y: number) => EPOSPrinter;
   /**

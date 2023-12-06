@@ -25,7 +25,6 @@ const navElementsUser: NavElement[] = [
 ];
 
 const navElementsWaiter: NavElement[] = [
-  { path: Page.Index, text: "Home", icon: HomeIcon },
   {
     path: `${Page.Companies}/{company}/${SubPage.Events}/{event}/${SubPage.Order}`,
     text: "Bestellung",

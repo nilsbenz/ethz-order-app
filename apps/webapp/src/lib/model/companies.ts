@@ -1,10 +1,10 @@
 import { Company, Event } from "@order-app/types";
-import { createSimpleConverter } from "./common";
 import {
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   Timestamp,
 } from "firebase/firestore";
+import { createSimpleConverter } from "./common";
 
 export const companyConverter = createSimpleConverter<Company>();
 
@@ -25,6 +25,12 @@ export const eventConverter: FirestoreDataConverter<Event, DbEvent> = {
         checkedInAt: (w.checkedInAt as unknown as Timestamp).toDate(),
         disableAt: (w.disableAt as unknown as Timestamp).toDate(),
       })),
+      articleCategories: data.articleCategories.sort((a, b) =>
+        a.displayName < b.displayName ? -1 : 1
+      ),
+      articles: data.articles.sort((a, b) =>
+        a.displayName < b.displayName ? -1 : 1
+      ),
     } as Event;
   },
 };

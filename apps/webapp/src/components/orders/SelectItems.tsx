@@ -16,9 +16,22 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   cn,
 } from "@order-app/ui";
 import { addDoc, collection } from "firebase/firestore";
+import {
+  ArrowBigLeftIcon,
+  ArrowBigRightIcon,
+  MenuIcon,
+  PrinterIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import BottomAction from "../layout/BottomAction";
 import SelectItemsCategory from "./SelectItemsCategory";
@@ -35,12 +48,17 @@ function ConfirmItem({ item }: { item: OrderItem }) {
   return (
     <div className="py-2">
       <div className="flex justify-between">
-        <p>
-          <span className="inline-block min-w-[1.5rem] text-right font-medium tabular-nums">
-            {item.amount} x
-          </span>{" "}
-          {article.displayName}
-        </p>
+        <div>
+          <p>
+            <span className="inline-block min-w-[1.5rem] text-right font-medium tabular-nums">
+              {item.amount} x
+            </span>{" "}
+            {article.displayName}
+          </p>
+          {item.comment && (
+            <p className="text-muted-foreground">{item.comment}</p>
+          )}
+        </div>
         <p className="font-medium tabular-nums">
           {(item.amount * article.price).toFixed(2).replace(".00", ".–")}
         </p>
@@ -128,12 +146,13 @@ export default function SelectItems() {
           </div>
           <BottomAction className="grid-cols-2 gap-4">
             <Button
-              className="ml-auto w-full sm:max-w-[12rem]"
+              className="ml-auto w-full dark:bg-background sm:max-w-[12rem]"
               size="sm"
               onClick={() => setConfirm(false)}
               variant="secondary"
               disabled={busy}
             >
+              <ArrowBigLeftIcon className="mr-1 w-5" strokeWidth={2.25} />
               Zurück
             </Button>
             <Button
@@ -142,7 +161,8 @@ export default function SelectItems() {
               onClick={handleConfirm}
               disabled={busy}
             >
-              Bestätigen
+              Absenden
+              <PrinterIcon className="ml-2 w-5" strokeWidth={2.25} />
             </Button>
           </BottomAction>
         </div>
@@ -173,35 +193,72 @@ export default function SelectItems() {
         </Select>
       </div>
       <Separator className="my-4" />
-      <ScrollArea className="whitespace-nowrap rounded-md border border-border bg-muted px-1">
-        <div className="flex gap-1 py-1 text-sm font-medium text-muted-foreground">
-          {event.articleCategories.map((category) => (
-            <button
-              key={category.id}
-              className={cn(
-                "scroll-mt-4 rounded px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
-                activeCategory === category.id &&
-                  "bg-background text-foreground"
-              )}
-              onClick={(e) => {
-                setActiveCategory(category.id);
-                e.currentTarget.scrollIntoView({ behavior: "smooth" });
-              }}
+      <div className="flex h-12 rounded-lg border border-border bg-muted">
+        <ScrollArea className="whitespace-nowrap px-1">
+          <div className="flex gap-1 py-1 text-sm font-medium text-muted-foreground">
+            {event.articleCategories.map((category) => (
+              <button
+                key={category.id}
+                className={cn(
+                  "scroll-mt-4 rounded px-3 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted",
+                  activeCategory === category.id &&
+                    "bg-background text-foreground"
+                )}
+                onClick={(e) => {
+                  setActiveCategory(category.id);
+                  e.currentTarget.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                {category.displayName}
+              </button>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" className="h-1.5" />
+        </ScrollArea>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              variant="outline"
+              className="mr-[3px] flex-shrink-0 self-center"
             >
-              {category.displayName}
-            </button>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" className="h-1.5" />
-      </ScrollArea>
+              <MenuIcon />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom">
+            <SheetHeader>
+              <SheetTitle>Kategorie wählen</SheetTitle>
+              <SheetDescription className="flex flex-col divide-y">
+                {event.articleCategories.map((category) => (
+                  <SheetClose key={category.id} asChild>
+                    <button
+                      className={cn(
+                        "-mx-2 rounded px-2 py-3 text-left text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
+                        activeCategory === category.id && "text-foreground"
+                      )}
+                      onClick={() => {
+                        setActiveCategory(category.id);
+                      }}
+                    >
+                      {category.displayName}
+                    </button>
+                  </SheetClose>
+                ))}
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      </div>
       <SelectItemsCategory category={activeCategory} />
       <BottomAction>
         <Button
           className="w-full sm:max-w-xs"
           size="sm"
           onClick={() => setConfirm(true)}
+          disabled={orderState.items.length === 0}
         >
           Weiter
+          <ArrowBigRightIcon className="ml-1 w-5" strokeWidth={2.25} />
         </Button>
       </BottomAction>
     </>

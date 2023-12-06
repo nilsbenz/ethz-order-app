@@ -2,10 +2,11 @@ import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import usePrinter from "@/lib/hooks/usePrinter";
 import { orderConverter } from "@/lib/model/orders";
+import { printOrder } from "@/lib/printer";
 import { EVENT_QUERY } from "@/lib/queries";
 import useEventStore from "@/lib/store/event";
 import { Order, OrderStatus } from "@order-app/types";
-import { Button, Checkbox, Input, Label, Separator } from "@order-app/ui";
+import { Button, Input, Separator } from "@order-app/ui";
 import {
   collection,
   doc,
@@ -21,6 +22,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { EventType } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Orders() {
   const { event: eventId } = useParams();
@@ -32,40 +34,25 @@ export default function Orders() {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
 
   const [printerIPAddress, setPrinterIPAddress] = useState("192.168.1.192");
-  const [secure, setSecure] = useState(true);
 
   const { printer, connectionStatus, connect } = usePrinter();
 
   function handleConnect(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    connect(printerIPAddress, secure);
+    connect(printerIPAddress);
   }
 
-  function handlePrint() {
-    const prn = printer.current;
-    if (!prn) {
-      alert("Not connected to printer");
+  async function handlePrint() {
+    if (!event || !currentOrder) {
       return;
     }
-
-    prn.addText(`Tisch: ${currentOrder?.table}`);
-    prn.addHLine(5, 15, undefined);
-    prn.addText("Artikel:");
-    currentOrder?.items.forEach((item) => {
-      prn.addText(
-        `    ${item.amount} x ${event?.articles.find(
-          (a) => a.id === item.articleId
-        )?.displayName}`
-      );
-      if (item.comment) {
-        prn.addText(`        ${item.comment}`);
-      }
-    });
-    prn.addFeedLine(3);
-    prn.addCut(prn.CUT_FEED);
-
-    prn.send();
+    const prn = printer.current;
+    if (!prn) {
+      toast.error("Es ist kein Drucker verbunden.");
+      return;
+    }
+    await printOrder(prn, event, currentOrder);
   }
 
   async function handleOrderDone() {
@@ -108,10 +95,6 @@ export default function Orders() {
     return <>event not found</>;
   }
 
-  if (!currentOrder) {
-    return <p>Aktuell ist keine Bestellung offen.</p>;
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <h2 className="h1">Drucker</h2>
@@ -121,50 +104,43 @@ export default function Orders() {
           value={printerIPAddress}
           onChange={(e) => setPrinterIPAddress(e.currentTarget.value)}
         />
-        <div className="flex items-center gap-2">
-          <Label htmlFor="secure">Secure</Label>
-          <Checkbox
-            id="secure"
-            checked={secure}
-            onCheckedChange={(c) => setSecure(c === true)}
-          />
-        </div>
-        <Button
-          disabled={connectionStatus === "Connected"}
-          className="col-span-2"
-        >
-          Connect
-        </Button>
+        <Button disabled={connectionStatus === "Connected"}>Verbinden</Button>
       </form>
       <p>Connection status: {connectionStatus}</p>
       <Separator />
-      <h2 className="h1">Aktuelle Bestellung</h2>
-      <p>Tisch: {currentOrder?.table}</p>
-      <div>
-        <p>Artikel:</p>
-        <div className="pl-4">
-          {currentOrder.items.map((item) => (
-            <div key={item.articleId}>
-              <p>
-                {item.amount} x{" "}
-                {
-                  event.articles.find((a) => a.id === item.articleId)
-                    ?.displayName
-                }
-              </p>
-              {item.comment && (
-                <p className="pl-4 text-muted-foreground">{item.comment}</p>
-              )}
+      {currentOrder ? (
+        <>
+          <h2 className="h1">Aktuelle Bestellung</h2>
+          <p>Tisch: {currentOrder?.table}</p>
+          <div>
+            <p>Artikel:</p>
+            <div className="pl-4">
+              {currentOrder.items.map((item) => (
+                <div key={item.articleId}>
+                  <p>
+                    {item.amount} x{" "}
+                    {
+                      event.articles.find((a) => a.id === item.articleId)
+                        ?.displayName
+                    }
+                  </p>
+                  {item.comment && (
+                    <p className="pl-4 text-muted-foreground">{item.comment}</p>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <Button onClick={handlePrint} variant="outline">
-          Bestellung drucken
-        </Button>
-        <Button onClick={handleOrderDone}>Bestellung abgeschlossen</Button>
-      </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Button onClick={handlePrint} variant="outline">
+              Bestellung drucken
+            </Button>
+            <Button onClick={handleOrderDone}>Bestellung abgeschlossen</Button>
+          </div>
+        </>
+      ) : (
+        <p>Aktuell ist keine Bestellung offen.</p>
+      )}
     </div>
   );
 }

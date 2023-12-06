@@ -2,7 +2,13 @@ import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { OrderItem } from "@order-app/types";
 import { Button } from "@order-app/ui";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import {
+  CheckCheckIcon,
+  CoinsIcon,
+  EraserIcon,
+  MinusIcon,
+  PlusIcon,
+} from "lucide-react";
 import { useState } from "react";
 import BottomAction from "../layout/BottomAction";
 
@@ -35,7 +41,6 @@ function ListItem({
         <Button
           size="icon"
           variant="outline"
-          className="h-8 w-8"
           onClick={() => onChangeAmount(-1)}
           disabled={currentPayment <= 0}
         >
@@ -50,7 +55,6 @@ function ListItem({
         <Button
           size="icon"
           variant="outline"
-          className="h-8 w-8"
           onClick={() => onChangeAmount(1)}
           disabled={currentPayment + item.paid >= item.amount}
         >
@@ -67,6 +71,21 @@ export default function Payment() {
   const [currentPayment, setCurrentPayment] = useState<
     { articleId: string; amount: number }[]
   >([]);
+
+  function handleSelectAll() {
+    if (orderState.stage !== "payment") {
+      return;
+    }
+    setCurrentPayment(
+      orderState.items
+        .filter((i) => i.amount > i.paid)
+        .map((i) => ({ articleId: i.articleId, amount: i.amount - i.paid }))
+    );
+  }
+
+  function handleUnselectAll() {
+    setCurrentPayment([]);
+  }
 
   function handleChangeAmount(articleId: string) {
     return (change: number) => {
@@ -93,8 +112,23 @@ export default function Payment() {
     return null;
   }
 
+  const isRemaining = !orderState.items.some(
+    (i) =>
+      i.amount >
+      i.paid +
+        (currentPayment.find((p) => p.articleId === i.articleId)?.amount ?? 0)
+  );
+
   return (
     <>
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" size="icon" onClick={handleUnselectAll}>
+          <EraserIcon />
+        </Button>
+        <Button variant="outline" onClick={handleSelectAll}>
+          Alle auswählen
+        </Button>
+      </div>
       <div className="divide-y">
         {orderState.items.map((item) => (
           <ListItem
@@ -128,15 +162,12 @@ export default function Payment() {
         </div>
         <BottomAction>
           <Button className="w-full sm:max-w-xs" onClick={handleNextClicked}>
-            {orderState.items.some(
-              (i) =>
-                i.amount >
-                i.paid +
-                  (currentPayment.find((p) => p.articleId === i.articleId)
-                    ?.amount ?? 0)
-            )
-              ? "Nächste Zahlung"
-              : "Bestellung abschliessen"}
+            {isRemaining ? "Bestellung abschliessen" : "Nächste Zahlung"}
+            {isRemaining ? (
+              <CheckCheckIcon className="ml-2 w-5" strokeWidth={2.25} />
+            ) : (
+              <CoinsIcon className="ml-2 w-5" strokeWidth={2.25} />
+            )}
           </Button>
         </BottomAction>
       </div>
