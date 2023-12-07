@@ -117,10 +117,14 @@ export default function WaiterRequestsListItem({ waiter }: { waiter: Waiter }) {
       <p className="flex-grow whitespace-nowrap font-medium">
         {user?.displayName}
       </p>
-      <p className="truncate font-normal text-muted-foreground">
-        {waiter.userId}
-      </p>
-      <div className="flex gap-1 pr-2 md:pr-0">
+      <div className="flex items-center gap-1 pr-2 md:pr-0">
+        <p className="mr-1 tabular-nums text-muted-foreground">
+          bis{" "}
+          {waiter.disableAt.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </p>
         <Button
           variant="ghost"
           size="icon"
@@ -128,7 +132,7 @@ export default function WaiterRequestsListItem({ waiter }: { waiter: Waiter }) {
           onClick={handleRejectWaiter}
           disabled={busy}
         >
-          <XSquareIcon />
+          <XSquareIcon strokeWidth={2.25} />
         </Button>
         <Button
           variant="ghost"
@@ -136,7 +140,7 @@ export default function WaiterRequestsListItem({ waiter }: { waiter: Waiter }) {
           onClick={handleAcceptWaiter}
           disabled={busy}
         >
-          <CheckSquareIcon />
+          <CheckSquareIcon strokeWidth={2.25} />
         </Button>
       </div>
     </div>

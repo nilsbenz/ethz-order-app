@@ -225,6 +225,7 @@ export default function JoinEvent() {
               value={workUntil}
               onChange={(e) => setWorkUntil(e.currentTarget.value)}
               disabled={formState === "busy"}
+              className="w-full"
               required
             />
           </div>
