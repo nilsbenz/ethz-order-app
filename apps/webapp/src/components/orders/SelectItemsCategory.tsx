@@ -19,7 +19,7 @@ function ListItem({ article }: { article: Article }) {
       updateItems(
         item
           ? { ...item, amount: item.amount + change }
-          : { articleId: article.id, amount: 1, comment: "", printed: false }
+          : { articleId: article.id, amount: 1, comment: "" }
       );
     };
   }

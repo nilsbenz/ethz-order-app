@@ -49,6 +49,8 @@ export default function NewEventForm() {
           tables: [],
         },
         archived: false,
+        printers: [],
+        displays: [],
       };
       await setDoc(
         doc(db, Collection.Events, id).withConverter(eventConverter),

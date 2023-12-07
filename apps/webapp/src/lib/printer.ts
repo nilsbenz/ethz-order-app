@@ -8,7 +8,7 @@ export async function printOrder(
   printer: EPOSPrinter,
   event: Event,
   order: Order
-) {
+): Promise<{ success: boolean; code: string }> {
   const waiter = (
     await getDoc(
       doc(db, Collection.Users, order.createdBy).withConverter(appUserConverter)
@@ -47,7 +47,7 @@ export async function printOrder(
   return new Promise((res, rej) => {
     printer.onreceive = (success, code, status) => {
       if (success) {
-        res(true);
+        res({ success, code });
       } else {
         rej({ success, code, status });
       }

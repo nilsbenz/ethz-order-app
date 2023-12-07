@@ -9,6 +9,19 @@ export type Waiter = {
   disableAt: Date;
 };
 
+export type DisplayOutput = {
+  id: string;
+  displayName: string;
+  outputCategories: string[];
+};
+
+export type PrinterOutput = {
+  id: string;
+  displayName: string;
+  printer: string;
+  outputCategories: string[];
+};
+
 export type Event = {
   id: RecordId;
   companyId: RecordId;
@@ -19,6 +32,8 @@ export type Event = {
   articles: Article[];
   tables: TableConfig;
   archived: boolean;
+  printers: PrinterOutput[];
+  displays: DisplayOutput[];
 };
 
 export type Company = {
