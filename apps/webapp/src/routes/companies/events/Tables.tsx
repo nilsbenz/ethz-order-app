@@ -89,8 +89,8 @@ export default function Tables() {
         tables: tables
           .filter((t) => t.col < numCols && t.row < numRows)
           .sort((a, b) => (a.col === b.col ? a.row - b.row : a.col - b.col)),
-        hasSelfService: hasSelfService && !!selfServicePrefix,
-        selfServicePrefix,
+        hasSelfService: hasSelfService && !!selfServicePrefix.trimStart(),
+        selfServicePrefix: selfServicePrefix.trimStart(),
       });
     } finally {
       setBusy(false);

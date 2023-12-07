@@ -47,6 +47,8 @@ export default function NewEventForm() {
           colLabels: TableLabelType.Alphabetic,
           rowLabels: TableLabelType.Numeric,
           tables: [],
+          hasSelfService: false,
+          selfServicePrefix: "S",
         },
         archived: false,
         printers: [],
