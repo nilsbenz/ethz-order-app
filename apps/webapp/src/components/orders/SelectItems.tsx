@@ -204,10 +204,7 @@ export default function SelectItems() {
                   activeCategory === category.id &&
                     "bg-background text-foreground"
                 )}
-                onClick={(e) => {
-                  setActiveCategory(category.id);
-                  e.currentTarget.scrollIntoView({ behavior: "smooth" });
-                }}
+                onClick={() => setActiveCategory(category.id)}
               >
                 {category.displayName}
               </button>
@@ -234,11 +231,10 @@ export default function SelectItems() {
                     <button
                       className={cn(
                         "-mx-2 rounded px-2 py-3 text-left text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card",
-                        activeCategory === category.id && "text-foreground"
+                        activeCategory === category.id &&
+                          "font-medium text-foreground"
                       )}
-                      onClick={() => {
-                        setActiveCategory(category.id);
-                      }}
+                      onClick={() => setActiveCategory(category.id)}
                     >
                       {category.displayName}
                     </button>
