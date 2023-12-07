@@ -174,6 +174,7 @@ export default function Payment() {
             size="sm"
             className="mr-auto w-full sm:max-w-xs"
             onClick={handleNextClicked}
+            disabled={currentPayment.length === 0}
           >
             {isRemaining ? (
               <>

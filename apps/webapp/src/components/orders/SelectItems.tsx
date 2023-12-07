@@ -30,6 +30,7 @@ import { addDoc, collection } from "firebase/firestore";
 import {
   ArrowBigLeftIcon,
   ArrowBigRightIcon,
+  CircleSlashIcon,
   MenuIcon,
   PrinterIcon,
 } from "lucide-react";
@@ -42,14 +43,25 @@ function ConfirmItem({ item }: { item: OrderItem }) {
   const article = useEventStore(
     (state) => state.event?.articles.find((a) => a.id === item.articleId)
   );
+  const category = useEventStore(
+    (state) =>
+      state.event?.articleCategories.find((c) => c.id === article?.category)
+  );
 
   if (!article) {
     return <div className="py-2">Artikel nicht gefunden!</div>;
   }
 
+  const disabled = !article.enabled || category?.enabled === false;
+
   return (
     <div className="py-2">
-      <div className="flex justify-between">
+      <div
+        className={cn(
+          "flex justify-between",
+          disabled && "text-muted-foreground"
+        )}
+      >
         <div>
           <p>
             <span className="inline-block min-w-[1.5rem] text-right font-medium tabular-nums">
@@ -61,9 +73,14 @@ function ConfirmItem({ item }: { item: OrderItem }) {
             <p className="text-muted-foreground">{item.comment}</p>
           )}
         </div>
-        <p className="font-medium tabular-nums">
-          {(item.amount * article.price).toFixed(2).replace(".00", ".–")}
-        </p>
+        <div className="flex gap-2">
+          {disabled && (
+            <CircleSlashIcon className="w-5 text-destructive" strokeWidth={3} />
+          )}
+          <p className="min-w-[3rem] font-medium tabular-nums">
+            {(item.amount * article.price).toFixed(2).replace(".00", ".–")}
+          </p>
+        </div>
       </div>
     </div>
   );

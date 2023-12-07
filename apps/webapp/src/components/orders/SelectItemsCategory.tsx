@@ -1,11 +1,15 @@
 import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { Article } from "@order-app/types";
-import { Button, Input } from "@order-app/ui";
-import { MinusIcon, PencilIcon, PlusIcon } from "lucide-react";
+import { Button, Input, cn } from "@order-app/ui";
+import { CircleSlashIcon, MinusIcon, PencilIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 function ListItem({ article }: { article: Article }) {
+  const category = useEventStore(
+    (state) =>
+      state.event?.articleCategories.find((c) => c.id === article.category)
+  );
   const [item, updateItems] = useOrderStore((state) => [
     state.stage === "draft"
       ? state.items.find((i) => i.articleId === article.id)
@@ -24,9 +28,19 @@ function ListItem({ article }: { article: Article }) {
     };
   }
 
+  const disabled = !article.enabled || category?.enabled === false;
+
   return (
     <div className="space-y-2 py-2">
-      <div className="flex items-center">
+      <div
+        className={cn("flex items-center", disabled && "text-muted-foreground")}
+      >
+        {disabled && (
+          <CircleSlashIcon
+            className="mr-1.5 w-5 text-destructive"
+            strokeWidth={3}
+          />
+        )}
         <p className="flex-grow">{article.displayName}</p>
         {!showCommentInput && item && !item.comment && (
           <Button
