@@ -1,22 +1,28 @@
 import { Page } from "@/lib/pages";
 import useAuthStore from "@/lib/store/auth";
 import useGeneralStore from "@/lib/store/general";
+import { UserLevel } from "@order-app/types";
 import { Button, cn } from "@order-app/ui";
 import {
   CloudIcon,
   LogInIcon,
+  QrCodeIcon,
   SunriseIcon,
   SunsetIcon,
   UserIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import TwintCode from "../orders/TwintCode";
 
 function Header() {
   const [theme, toggleTheme] = useGeneralStore((state) => [
     state.theme,
     state.toggleTheme,
   ]);
-  const user = useAuthStore((state) => state.user);
+  const [user, userData] = useAuthStore((state) => [
+    state.user,
+    state.userData,
+  ]);
 
   const safeAreaHeight = `max(0px, calc(env(safe-area-inset-top, 0.5rem) - 0.5rem))`;
   const headerHeight = "h-14";
@@ -47,6 +53,13 @@ function Header() {
             </Link>
           </Button>
           <div className="flex items-center gap-1">
+            {userData && userData.level >= UserLevel.Waiter && (
+              <TwintCode>
+                <Button variant="ghost" size="icon">
+                  <QrCodeIcon strokeWidth={2.25} />
+                </Button>
+              </TwintCode>
+            )}
             <Button variant="ghost" onClick={toggleTheme} size="icon">
               {theme === "light" ? (
                 <SunsetIcon strokeWidth={2.25} />

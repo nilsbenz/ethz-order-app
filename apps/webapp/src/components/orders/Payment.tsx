@@ -8,9 +8,11 @@ import {
   EraserIcon,
   MinusIcon,
   PlusIcon,
+  QrCodeIcon,
 } from "lucide-react";
 import { useState } from "react";
 import BottomAction from "../layout/BottomAction";
+import TwintCode from "./TwintCode";
 
 function ListItem({
   item,
@@ -118,6 +120,14 @@ export default function Payment() {
       i.paid +
         (currentPayment.find((p) => p.articleId === i.articleId)?.amount ?? 0)
   );
+  const totalAmount = orderState.items.reduce(
+    (acc, curr) =>
+      acc +
+      (event.articles.find((i) => i.id === curr.articleId)?.price ?? 0) *
+        (currentPayment.find((i) => i.articleId === curr.articleId)?.amount ??
+          0),
+    0
+  );
 
   return (
     <>
@@ -146,27 +156,39 @@ export default function Payment() {
         <div className="flex items-end justify-between">
           <p className="font-medium">Total</p>
           <p className="text-xl font-medium">
-            {orderState.items
-              .reduce(
-                (acc, curr) =>
-                  acc +
-                  (event.articles.find((i) => i.id === curr.articleId)?.price ??
-                    0) *
-                    (currentPayment.find((i) => i.articleId === curr.articleId)
-                      ?.amount ?? 0),
-                0
-              )
-              .toFixed(2)
-              .replace(".00", ".–")}
+            {totalAmount.toFixed(2).replace(".00", ".–")}
           </p>
         </div>
-        <BottomAction>
-          <Button className="w-full sm:max-w-xs" onClick={handleNextClicked}>
-            {isRemaining ? "Bestellung abschliessen" : "Nächste Zahlung"}
+        <BottomAction className="grid-cols-2 gap-4">
+          <TwintCode amount={totalAmount}>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="ml-auto w-full sm:max-w-xs"
+            >
+              Twint
+              <QrCodeIcon className="ml-2 w-5" strokeWidth={2.25} />
+            </Button>
+          </TwintCode>
+          <Button
+            size="sm"
+            className="mr-auto w-full sm:max-w-xs"
+            onClick={handleNextClicked}
+          >
             {isRemaining ? (
-              <CheckCheckIcon className="ml-2 w-5" strokeWidth={2.25} />
+              <>
+                <span className="hidden sm:inline">
+                  Bestellung abschliessen
+                </span>
+                <span className="sm:hidden">Abschliessen</span>
+                <CheckCheckIcon className="ml-2 w-5" strokeWidth={2.25} />
+              </>
             ) : (
-              <CoinsIcon className="ml-2 w-5" strokeWidth={2.25} />
+              <>
+                <span className="hidden sm:inline">Nächste Zahlung</span>
+                <span className="sm:hidden">Nächste</span>
+                <CoinsIcon className="ml-2 w-5" strokeWidth={2.25} />
+              </>
             )}
           </Button>
         </BottomAction>
