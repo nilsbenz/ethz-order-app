@@ -61,7 +61,7 @@ export default function SelectTable() {
                 <button
                   key={row}
                   className={cn(
-                    "grid aspect-square min-w-[4rem] place-items-center rounded-md border border-border bg-background shadow-sm transition-all",
+                    "grid aspect-square max-h-[5rem] w-full min-w-[4rem] place-items-center rounded-md border border-border bg-background shadow-sm transition-all",
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
                   )}
                   onClick={() => orderState.createNewOrder(event.id, table)}
