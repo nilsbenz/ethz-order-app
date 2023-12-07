@@ -1,5 +1,6 @@
 import ArticleForm from "@/components/articles/ArticleForm";
 import ArticlesList from "@/components/articles/ArticlesList";
+import OutputCategoriesList from "@/components/articles/OutputCategoriesList";
 import useEventStore from "@/lib/store/event";
 import { Button } from "@order-app/ui";
 import { PlusIcon } from "lucide-react";
@@ -20,10 +21,11 @@ export default function Articles() {
             disabled={!event}
             onClick={() => setOpenAddDialog(true)}
           >
-            Neu
+            Artikel
             <PlusIcon className="h-5" strokeWidth={2.25} />
           </Button>
         </div>
+        <OutputCategoriesList />
         <ArticlesList />
       </div>
       <ArticleForm open={openAddDialog} onOpenChange={setOpenAddDialog} />

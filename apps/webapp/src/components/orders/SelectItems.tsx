@@ -194,7 +194,7 @@ export default function SelectItems() {
       </div>
       <Separator className="my-4" />
       <div className="flex h-12 rounded-lg border border-border bg-muted">
-        <ScrollArea className="whitespace-nowrap px-1">
+        <ScrollArea className="flex-grow whitespace-nowrap px-1">
           <div className="flex gap-1 py-1 text-sm font-medium text-muted-foreground">
             {event.articleCategories.map((category) => (
               <button

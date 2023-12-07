@@ -56,7 +56,7 @@ const CategoryType = {
 } as const;
 type CategoryType = (typeof CategoryType)[keyof typeof CategoryType];
 
-const USE_CATEGORY_COLOR = "none";
+const USE_CATEGORY_VALUE = "none";
 
 const FormSchema = z.union([
   z.object({
@@ -65,14 +65,17 @@ const FormSchema = z.union([
     articleName: z.string().min(2),
     price: z.coerce.number().multipleOf(0.05),
     articleColor: z.string(),
+    articleOutput: z.string(),
   }),
   z.object({
     categoryType: z.literal(CategoryType.New),
     newCategoryName: z.string().min(2),
     newCategoryColor: z.string(),
+    newCategoryOutput: z.string(),
     articleName: z.string().min(2),
     price: z.coerce.number().multipleOf(0.05),
     articleColor: z.string(),
+    articleOutput: z.string(),
   }),
 ]);
 
@@ -96,7 +99,10 @@ export default function ArticleForm({
       category: edit?.category ?? copyFrom?.category,
       articleName: edit?.displayName ?? copyFrom?.displayName,
       price: edit?.price ?? copyFrom?.price,
-      articleColor: edit?.customColor ?? copyFrom?.customColor ?? "none",
+      articleColor:
+        edit?.customColor ?? copyFrom?.customColor ?? USE_CATEGORY_VALUE,
+      articleOutput:
+        edit?.customOutput ?? copyFrom?.customOutput ?? USE_CATEGORY_VALUE,
     },
   });
   const [formStatus, setFormStatus] = useState<"idle" | "busy">("idle");
@@ -185,9 +191,12 @@ export default function ArticleForm({
           displayName: data.articleName,
           category,
           price: data.price,
-          customOutput: null,
+          customOutput:
+            data.articleOutput === USE_CATEGORY_VALUE
+              ? null
+              : data.articleOutput,
           customColor:
-            data.articleColor === USE_CATEGORY_COLOR
+            data.articleColor === USE_CATEGORY_VALUE
               ? null
               : (data.articleColor as ArticleColor),
           enabled: edit?.enabled ?? true,
@@ -202,7 +211,7 @@ export default function ArticleForm({
                 color: data.newCategoryColor as ArticleColor,
                 enabled: true,
                 archived: false,
-                output: "", // TODO
+                output: data.newCategoryOutput,
               }
             : undefined,
       });
@@ -310,7 +319,7 @@ export default function ArticleForm({
                       control={form.control}
                       name="newCategoryName"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="col-span-2">
                           <FormLabel htmlFor="newCategoryName">
                             Name der Kategorie
                           </FormLabel>
@@ -352,6 +361,32 @@ export default function ArticleForm({
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="newCategoryOutput"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel htmlFor="newCategoryOutput">
+                            Output Kategorie
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger id="newCategoryOutput">
+                              <SelectValue placeholder="Output wählen" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {event?.outputCategories.map((cat) => (
+                                <SelectItem key={cat.id} value={cat.id}>
+                                  {cat.displayName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
                   </TabsContent>
                 </Tabs>
               )}
@@ -362,7 +397,7 @@ export default function ArticleForm({
                 control={form.control}
                 name="articleName"
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
+                  <FormItem>
                     <FormLabel htmlFor="articleName">
                       Name des Artikels
                     </FormLabel>
@@ -410,12 +445,41 @@ export default function ArticleForm({
                         <SelectValue placeholder="Farbe wählen" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={USE_CATEGORY_COLOR}>
+                        <SelectItem value={USE_CATEGORY_VALUE}>
                           Wie Kategorie
                         </SelectItem>
                         {Object.keys(colorOptions).map((color) => (
                           <SelectItem key={color} value={color}>
                             {colorOptions[color as keyof typeof colorOptions]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="articleOutput"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="articleOutput">
+                      Output Kategorie
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger id="articleOutput">
+                        <SelectValue placeholder="Output wählen" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={USE_CATEGORY_VALUE}>
+                          Wie Kategorie
+                        </SelectItem>
+                        {event?.outputCategories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.displayName}
                           </SelectItem>
                         ))}
                       </SelectContent>

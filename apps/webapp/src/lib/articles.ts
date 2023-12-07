@@ -5,10 +5,10 @@ const alphabet =
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const nanoid = customAlphabet(alphabet);
 
-export function generateId(existing: { id: string }[]) {
-  let id = nanoid(4);
+export function generateId(existing: { id: string }[], length = 4) {
+  let id = nanoid(length);
   while (existing.find((a) => a.id === id)) {
-    id = nanoid(4);
+    id = nanoid(length);
   }
   return id;
 }

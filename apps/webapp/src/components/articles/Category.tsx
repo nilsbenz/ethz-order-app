@@ -19,12 +19,14 @@ import {
   CircleSlashIcon,
   MoreVerticalIcon,
   PencilIcon,
+  PlusIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import ConfirmActionDialog from "../common/ConfirmActionDialog";
 import TableView from "../lists/TableView";
+import ArticleForm from "./ArticleForm";
 import ArticlesListItem from "./ArticlesListItem";
 import EditCategory from "./EditCategory";
 
@@ -38,8 +40,19 @@ export default function Category({
   const event = useEventStore((state) => state.event);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
   const [busy, setBusy] = useState(false);
   const queryClient = useQueryClient();
+  const copyFromArticle: Article = {
+    id: "",
+    displayName: "",
+    category: category.id,
+    price: 0,
+    customColor: null,
+    customOutput: null,
+    enabled: true,
+    archived: false,
+  };
 
   const updateCategoryMutation = useMutation({
     mutationFn: async (updated?: ArticleCategory) => {
@@ -110,6 +123,13 @@ export default function Category({
             </DropdownMenuTrigger>
             <DropdownMenuContent side="left">
               <DropdownMenuItem
+                onClick={() => setOpenAddDialog(true)}
+                className="cursor-pointer"
+              >
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Artikel hinzufügen
+              </DropdownMenuItem>
+              <DropdownMenuItem
                 onClick={() => setOpenEditDialog(true)}
                 className="cursor-pointer"
               >
@@ -153,6 +173,11 @@ export default function Category({
         open={openEditDialog}
         onOpenChange={() => setOpenEditDialog(false)}
         category={category}
+      />
+      <ArticleForm
+        open={openAddDialog}
+        onOpenChange={setOpenAddDialog}
+        copyFrom={copyFromArticle}
       />
       <ConfirmActionDialog
         open={openRemoveDialog}

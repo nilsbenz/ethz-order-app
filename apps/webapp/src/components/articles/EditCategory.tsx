@@ -33,6 +33,7 @@ import * as z from "zod";
 const FormSchema = z.object({
   displayName: z.string().min(2),
   color: z.string(),
+  output: z.string(),
 });
 
 export default function EditCategory({
@@ -51,6 +52,7 @@ export default function EditCategory({
     defaultValues: {
       displayName: category.displayName,
       color: category.color,
+      output: category.output,
     },
   });
   const [formState, setFormState] = useState<"idle" | "busy">("idle");
@@ -85,6 +87,7 @@ export default function EditCategory({
         ...category,
         displayName: data.displayName,
         color: data.color as ArticleColor,
+        output: data.output,
       });
     } finally {
       setFormState("idle");
@@ -95,6 +98,7 @@ export default function EditCategory({
     if (open) {
       form.setValue("displayName", category.displayName);
       form.setValue("color", category.color);
+      form.setValue("output", category.output);
     }
   }, [open]);
 
@@ -115,7 +119,7 @@ export default function EditCategory({
               control={form.control}
               name="displayName"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2">
                   <FormLabel htmlFor="displayName">Anzeigename</FormLabel>
                   <Input
                     id="displayName"
@@ -142,6 +146,30 @@ export default function EditCategory({
                       {Object.keys(colorOptions).map((color) => (
                         <SelectItem key={color} value={color}>
                           {colorOptions[color as keyof typeof colorOptions]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="output"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="output">Output Kategorie</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger id="output">
+                      <SelectValue placeholder="Output wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {event?.outputCategories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.displayName}
                         </SelectItem>
                       ))}
                     </SelectContent>
