@@ -1,18 +1,28 @@
 import { useRef, useState } from "react";
 
+export const PrinterConnectionStatus = {
+  Disconnected: "disconnected",
+  Connecting: "connecting",
+  Connected: "connected",
+  Error: "error",
+} as const;
+export type PrinterConnectionStatus =
+  (typeof PrinterConnectionStatus)[keyof typeof PrinterConnectionStatus];
+
 export default function usePrinter() {
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected");
+  const [connectionStatus, setConnectionStatus] =
+    useState<PrinterConnectionStatus>(PrinterConnectionStatus.Disconnected);
 
   const ePosDevice = useRef<EPOSDevice>();
   const printer = useRef<EPOSDevice["current"]>();
 
   function connect(ip: string) {
     if (!ip) {
-      setConnectionStatus("Type the printer IP address");
+      setConnectionStatus(PrinterConnectionStatus.Error);
       return;
     }
 
-    setConnectionStatus("Connecting ...");
+    setConnectionStatus(PrinterConnectionStatus.Connecting);
 
     const ePosDev = new window.epson.ePOSDevice();
     ePosDevice.current = ePosDev;
@@ -26,14 +36,14 @@ export default function usePrinter() {
           (devobj, retcode) => {
             if (retcode === "OK") {
               printer.current = devobj;
-              setConnectionStatus("Connected");
+              setConnectionStatus(PrinterConnectionStatus.Connected);
             } else {
               throw retcode;
             }
           }
         );
       } else {
-        setConnectionStatus("Error whilst connecting – " + data);
+        setConnectionStatus(PrinterConnectionStatus.Error);
         throw data;
       }
     });

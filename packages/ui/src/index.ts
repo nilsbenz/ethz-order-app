@@ -1,5 +1,7 @@
 export * from "./components/button";
+export * from "./components/card";
 export * from "./components/checkbox";
+export * from "./components/collapsible";
 export * from "./components/command";
 export * from "./components/dialog";
 export * from "./components/dropdown-menu";
@@ -12,6 +14,7 @@ export * from "./components/select";
 export * from "./components/separator";
 export * from "./components/sheet";
 export * from "./components/slider";
+export * from "./components/switch";
 export * from "./components/tabs";
 
 export * from "./lib/utils";

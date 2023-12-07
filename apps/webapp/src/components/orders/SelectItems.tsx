@@ -1,6 +1,7 @@
 import { Collection } from "@/lib/collections";
 import { db } from "@/lib/firebase";
 import { orderConverter } from "@/lib/model/orders";
+import { getOutputCategories } from "@/lib/orders";
 import useAuthStore from "@/lib/store/auth";
 import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
@@ -91,6 +92,7 @@ export default function SelectItems() {
           createdAt: new Date(),
           table: orderState.table,
           items: orderState.items,
+          outputs: getOutputCategories(event, orderState.items),
         }
       );
       orderState.handleDraftApproved();
