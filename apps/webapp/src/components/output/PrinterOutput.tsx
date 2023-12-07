@@ -59,6 +59,9 @@ export default function PrinterOutput({
     []
   );
   const [enabled, setEnabled] = useState(false);
+  const [currentlyPrinting, setCurrentlyPrinting] = useState<string | null>(
+    null
+  );
 
   function handleConnect() {
     connect(printerIp);
@@ -115,9 +118,15 @@ export default function PrinterOutput({
         orderBy("createdAt"),
         limit(1)
       );
-      const unsubscribe = onSnapshot(ordersQuery, (snapshot) =>
-        snapshot.docs.length > 0 ? print(snapshot.docs[0].data()) : {}
-      );
+      const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+        if (snapshot.docs.length > 0) {
+          const order = snapshot.docs[0];
+          if (currentlyPrinting !== order.id) {
+            setCurrentlyPrinting(order.id);
+            print(order.data());
+          }
+        }
+      });
       return unsubscribe;
     }
   }, [event.id, enabled]);
