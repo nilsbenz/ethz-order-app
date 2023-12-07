@@ -34,7 +34,6 @@ export default function NewCompanyForm() {
       const newCompany: Company = {
         id,
         displayName: companyNameInput.current?.value,
-        admins: [],
         archived: false,
       };
       await setDoc(

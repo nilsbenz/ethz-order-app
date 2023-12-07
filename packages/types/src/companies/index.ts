@@ -1,4 +1,4 @@
-import { Article, ArticleCategory, TableConfig } from "..";
+import { Article, ArticleCategory, OutputCategory, TableConfig } from "..";
 import { UserId } from "../auth";
 import { RecordId } from "../common";
 
@@ -14,6 +14,7 @@ export type Event = {
   companyId: RecordId;
   displayName: string;
   waiters: Waiter[];
+  outputCategories: OutputCategory[];
   articleCategories: ArticleCategory[];
   articles: Article[];
   tables: TableConfig;
@@ -23,6 +24,5 @@ export type Event = {
 export type Company = {
   id: RecordId;
   displayName: string;
-  admins: UserId[];
   archived: boolean;
 };

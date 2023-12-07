@@ -185,6 +185,7 @@ export default function ArticleForm({
           displayName: data.articleName,
           category,
           price: data.price,
+          customOutput: null,
           customColor:
             data.articleColor === USE_CATEGORY_COLOR
               ? null
@@ -201,6 +202,7 @@ export default function ArticleForm({
                 color: data.newCategoryColor as ArticleColor,
                 enabled: true,
                 archived: false,
+                output: "", // TODO
               }
             : undefined,
       });

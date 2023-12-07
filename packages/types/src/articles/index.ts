@@ -1,5 +1,3 @@
-import { RecordId } from "../common";
-
 export const ArticleColor = {
   White: "white",
   Red: "red",
@@ -17,6 +15,7 @@ export type ArticleCategory = {
   color: ArticleColor;
   enabled: boolean;
   archived: boolean;
+  output: string;
 };
 
 export type Article = {
@@ -25,31 +24,12 @@ export type Article = {
   category: string;
   price: number;
   customColor: ArticleColor | null;
+  customOutput: string | null;
   enabled: boolean;
   archived: boolean;
 };
 
-export type OutputCategoryOutput =
-  | {
-      type: "screen";
-      options: {};
-    }
-  | {
-      type: "print";
-      options: {
-        printerIp: string;
-        printerPort: string;
-      };
-    };
-
 export type OutputCategory = {
-  id: RecordId;
-  eventId: RecordId;
+  id: string;
   displayName: string;
-  output: OutputCategoryOutput;
-} & {
-  [key in "categories" | "articles"]: {
-    include: string[];
-    exclude: string[];
-  };
 };

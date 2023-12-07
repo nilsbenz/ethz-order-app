@@ -38,6 +38,7 @@ export default function NewEventForm() {
         companyId: company?.id ?? "",
         displayName,
         waiters: [],
+        outputCategories: [],
         articleCategories: [],
         articles: [],
         tables: {
