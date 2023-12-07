@@ -36,6 +36,7 @@ import {
 import { useEffect, useState } from "react";
 import BottomAction from "../layout/BottomAction";
 import SelectItemsCategory from "./SelectItemsCategory";
+import SelectSelfServiceNumber from "./SelectSelfServiceNumber";
 
 function ConfirmItem({ item }: { item: OrderItem }) {
   const article = useEventStore(
@@ -73,8 +74,23 @@ export default function SelectItems() {
   const event = useEventStore((state) => state.event!);
   const orderState = useOrderStore();
   const [activeCategory, setActiveCategory] = useState("");
+  const [openSelfServiceNumber, setOpenSelfServiceNumber] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  function handleSubmitSelfService(n: number) {
+    orderState.changeTable(event.tables.selfServicePrefix + n);
+    setOpenSelfServiceNumber(false);
+  }
+
+  function handleOpenSelfServiceNumberChange(open: boolean) {
+    if (orderState.stage === "draft" && !open) {
+      orderState.changeTable(
+        orderState.table.slice(event.tables.selfServicePrefix.length + 1, -1)
+      );
+    }
+    setOpenSelfServiceNumber(open);
+  }
 
   async function handleConfirm() {
     if (orderState.stage !== "draft") {
@@ -110,6 +126,13 @@ export default function SelectItems() {
       setActiveCategory(event.articleCategories[0].id);
     }
   }, [event.articleCategories]);
+
+  const table = orderState.stage === "draft" ? orderState.table : null;
+  useEffect(() => {
+    if (table?.startsWith(`${event.tables.selfServicePrefix}[`)) {
+      setOpenSelfServiceNumber(true);
+    }
+  }, [table]);
 
   if (orderState.stage !== "draft") {
     return null;
@@ -181,6 +204,18 @@ export default function SelectItems() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
+            {event.tables.hasSelfService &&
+              (orderState.table.startsWith(event.tables.selfServicePrefix) ? (
+                <SelectItem value={orderState.table}>
+                  {orderState.table}
+                </SelectItem>
+              ) : (
+                <SelectItem
+                  value={`${event.tables.selfServicePrefix}[${orderState.table}]`}
+                >
+                  Selbstbedienung
+                </SelectItem>
+              ))}
             {event.tables.tables.map(({ col, row }) => {
               const table =
                 getTableLabel(col, event.tables.colLabels) +
@@ -259,6 +294,11 @@ export default function SelectItems() {
           <ArrowBigRightIcon className="ml-1 w-5" strokeWidth={2.25} />
         </Button>
       </BottomAction>
+      <SelectSelfServiceNumber
+        open={openSelfServiceNumber}
+        onOpenChange={handleOpenSelfServiceNumberChange}
+        onSubmit={handleSubmitSelfService}
+      />
     </>
   );
 }

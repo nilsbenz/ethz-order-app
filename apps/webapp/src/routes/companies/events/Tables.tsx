@@ -7,6 +7,7 @@ import { getTableLabel } from "@/lib/tables";
 import { Event, TableConfig, TableLabelType } from "@order-app/types";
 import {
   Button,
+  Input,
   Label,
   Select,
   SelectContent,
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
   Slider,
+  Switch,
   cn,
 } from "@order-app/ui";
 import { doc, updateDoc } from "firebase/firestore";
@@ -44,6 +46,8 @@ export default function Tables() {
     TableLabelType.Alphabetic
   );
   const [tables, setTables] = useState<TableConfig["tables"]>([]);
+  const [hasSelfService, setHasSelfService] = useState(false);
+  const [selfServicePrefix, setselfServicePrefix] = useState("S");
   const [busy, setBusy] = useState(false);
 
   const saveMutation = useMutation({
@@ -69,6 +73,8 @@ export default function Tables() {
       setColLabels(event.tables.colLabels);
       setRowLabels(event.tables.rowLabels);
       setTables(event.tables.tables);
+      setHasSelfService(event.tables.hasSelfService);
+      setselfServicePrefix(event.tables.selfServicePrefix);
     }
   }
 
@@ -83,6 +89,8 @@ export default function Tables() {
         tables: tables
           .filter((t) => t.col < numCols && t.row < numRows)
           .sort((a, b) => (a.col === b.col ? a.row - b.row : a.col - b.col)),
+        hasSelfService: hasSelfService && !!selfServicePrefix,
+        selfServicePrefix,
       });
     } finally {
       setBusy(false);
@@ -137,7 +145,27 @@ export default function Tables() {
           <SaveIcon />
         </Button>
       </div>
-      <h3 className="h2">Reihen</h3>
+      <h3 className="h2">Selbstbedienung</h3>
+      <div className="space-y-2 rounded-lg border p-4">
+        <div className="flex flex-row items-center justify-between">
+          <Label className="text-base">Selbstbedienung</Label>
+          <Switch
+            checked={hasSelfService}
+            onCheckedChange={setHasSelfService}
+          />
+        </div>
+        {hasSelfService && (
+          <div>
+            <Label htmlFor="selfServicePrefix">Präfix</Label>
+            <Input
+              id="selfServicePrefix"
+              value={selfServicePrefix}
+              onChange={(e) => setselfServicePrefix(e.currentTarget.value)}
+            />
+          </div>
+        )}
+      </div>
+      <h3 className="h2 pt-4">Reihen</h3>
       <div className="grid grid-cols-2 items-center gap-4">
         <Label className="flex justify-between">
           <span>Anzahl</span>

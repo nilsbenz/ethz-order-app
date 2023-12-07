@@ -2,11 +2,16 @@ import useEventStore from "@/lib/store/event";
 import useOrderStore from "@/lib/store/order";
 import { getTableLabel } from "@/lib/tables";
 import { TableLabelType } from "@order-app/types";
-import { cn } from "@order-app/ui";
+import { Button, cn } from "@order-app/ui";
+import SelectSelfServiceNumber from "./SelectSelfServiceNumber";
 
 export default function SelectTable() {
   const event = useEventStore((state) => state.event);
   const orderState = useOrderStore();
+
+  function handleCreateSelfService(n: number) {
+    orderState.createNewOrder(event!.id, event!.tables.selfServicePrefix + n);
+  }
 
   if (!event || orderState.stage !== "initial") {
     return null;
@@ -14,6 +19,16 @@ export default function SelectTable() {
 
   return (
     <>
+      {event.tables.hasSelfService && (
+        <>
+          <h3 className="h2">Selbstbedienung</h3>
+          <SelectSelfServiceNumber onSubmit={handleCreateSelfService}>
+            <Button variant="outline" className="mb-8 w-full">
+              Selbstbedienung
+            </Button>
+          </SelectSelfServiceNumber>
+        </>
+      )}
       <h3 className="h2">Tisch wählen</h3>
       <div
         className="grid gap-2 overflow-x-scroll rounded-lg border border-border bg-card p-2 transition-colors"

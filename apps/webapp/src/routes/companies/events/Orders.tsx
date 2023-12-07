@@ -4,8 +4,9 @@ import { EVENT_QUERY } from "@/lib/queries";
 import useEventStore from "@/lib/store/event";
 import { Loader2Icon } from "lucide-react";
 import { EventType } from "react-hook-form";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
+import { useInterval } from "usehooks-ts";
 
 export default function Orders() {
   const { event: eventId } = useParams();
@@ -14,6 +15,12 @@ export default function Orders() {
     enabled: false,
   });
   const event = useEventStore((state) => state.event);
+  const queryClient = useQueryClient();
+
+  useInterval(
+    () => queryClient.invalidateQueries({ queryKey: [EVENT_QUERY, event?.id] }),
+    5 * 60 * 1000
+  );
 
   if (status === "loading") {
     return (

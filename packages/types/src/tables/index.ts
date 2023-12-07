@@ -14,4 +14,6 @@ export type TableConfig = {
     row: number;
     col: number;
   }[];
+  hasSelfService: boolean;
+  selfServicePrefix: string;
 };
