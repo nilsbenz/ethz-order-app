@@ -1,4 +1,4 @@
-import { OrderStatus } from "@order-app/types";
+import { Order, OrderStatus } from "@order-app/types";
 import {
   arrayRemove,
   collection,
@@ -7,8 +7,8 @@ import {
   onSnapshot,
   orderBy,
   query,
-  updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { useEffect } from "react";
 import { Collection } from "../../lib/collections";
@@ -28,6 +28,18 @@ export default function Print() {
     state.currentOrder,
     state.setCurrentOrder,
   ]);
+
+  async function removeOutputs(order: Order, remove: string[]) {
+    const batch = writeBatch(db);
+    const orderRef = doc(db, Collection.Orders, order.id).withConverter(
+      orderConverter
+    );
+    remove.forEach((p) => batch.update(orderRef, { outputs: arrayRemove(p) }));
+    if (remove.length === order.outputs.length) {
+      batch.update(orderRef, { status: OrderStatus.Done });
+    }
+    await batch.commit();
+  }
 
   useEffect(() => {
     if (event && categories.length > 0) {
@@ -55,18 +67,16 @@ export default function Print() {
   }, [event?.id, categories]);
 
   useEffect(() => {
-    if (currentOrder && printed.length === categories.length) {
-      updateDoc(
-        doc(db, Collection.Orders, currentOrder.id).withConverter(
-          orderConverter
-        ),
-        {
-          outputs: arrayRemove(...printed),
-          ...(printed.length === currentOrder.outputs.length
-            ? { status: OrderStatus.Done }
-            : {}),
-        }
+    if (currentOrder) {
+      const shouldPrint = categories.filter((c) =>
+        currentOrder.outputs.includes(c)
       );
+      if (
+        shouldPrint.length === printed.length &&
+        shouldPrint.every((c) => printed.includes(c))
+      ) {
+        removeOutputs(currentOrder, printed);
+      }
     }
   }, [printed]);
 
