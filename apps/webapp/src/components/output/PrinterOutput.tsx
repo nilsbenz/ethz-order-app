@@ -141,10 +141,10 @@ export default function PrinterOutput({
                   </Button>
                 </CollapsibleTrigger>
               </div>
-              {history.length > 1 && (
+              {history.length > 0 && (
                 <div className="rounded-md border px-4 py-3 font-mono text-sm">
                   Bestellung von {history[0].table} |{" "}
-                  {history[0].createdAt.toLocaleString("ch-de")}
+                  {new Date(history[0].createdAt).toLocaleString("ch-de")}
                 </div>
               )}
               {history.length > 1 && (
@@ -155,7 +155,7 @@ export default function PrinterOutput({
                       className="rounded-md border px-4 py-3 font-mono text-sm"
                     >
                       Bestellung von {order.table} |{" "}
-                      {order.createdAt.toLocaleString("ch-de")}
+                      {new Date(order.createdAt).toLocaleString("ch-de")}
                     </div>
                   ))}
                 </CollapsibleContent>
