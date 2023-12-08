@@ -1,14 +1,8 @@
-import { Collection } from "@/lib/collections";
-import { db } from "@/lib/firebase";
 import usePrinter, { PrinterConnectionStatus } from "@/lib/hooks/usePrinter";
-import { orderConverter } from "@/lib/model/orders";
 import { printOrder } from "@/lib/printer";
 import useEventStore from "@/lib/store/event";
-import {
-  Order,
-  OrderStatus,
-  PrinterOutput as PrinterOutputType,
-} from "@order-app/types";
+import useOutputStore from "@/lib/store/output";
+import { Order, PrinterOutput as PrinterOutputType } from "@order-app/types";
 import {
   Button,
   Card,
@@ -23,17 +17,6 @@ import {
   Label,
   Switch,
 } from "@order-app/ui";
-import {
-  arrayRemove,
-  collection,
-  doc,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
 import { ChevronsUpDownIcon, PlugIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -59,9 +42,7 @@ export default function PrinterOutput({
     []
   );
   const [enabled, setEnabled] = useState(false);
-  const [currentlyPrinting, setCurrentlyPrinting] = useState<string | null>(
-    null
-  );
+  const outputState = useOutputStore();
 
   function handleConnect() {
     connect(printerIp);
@@ -70,38 +51,32 @@ export default function PrinterOutput({
   async function print(order: Order) {
     if (printer.current && order) {
       try {
-        const promises = output.outputCategories.map((cat) => {
-          const filteredOrder = {
-            ...order,
-            items: order.items.filter((item) => {
-              const article = event.articles.find(
-                (a) => a.id === item.articleId
-              );
-              if (!article) {
-                return false;
-              }
-              if (article.customOutput) {
-                return article.customOutput === cat;
-              }
-              const category = event.articleCategories.find(
-                (c) => c.id === article.category
-              );
-              return category?.output === cat;
-            }),
-          };
-          return printOrder(printer.current!, event, filteredOrder);
-        });
+        const promises = output.outputCategories
+          .filter((cat) => !outputState.printedCategories.includes(cat))
+          .map((cat) => {
+            const filteredOrder = {
+              ...order,
+              items: order.items.filter((item) => {
+                const article = event.articles.find(
+                  (a) => a.id === item.articleId
+                );
+                if (!article) {
+                  return false;
+                }
+                if (article.customOutput) {
+                  return article.customOutput === cat;
+                }
+                const category = event.articleCategories.find(
+                  (c) => c.id === article.category
+                );
+                return category?.output === cat;
+              }),
+            };
+            return printOrder(printer.current!, event, filteredOrder);
+          });
         await Promise.all(promises);
+        outputState.addPrintedCategories(output.outputCategories);
         setHistory([order, ...history.slice(0, 9)]);
-        await updateDoc(
-          doc(db, Collection.Orders, order.id).withConverter(orderConverter),
-          {
-            outputs: arrayRemove(...output.outputCategories),
-            ...(output.outputCategories.length === order.outputs.length
-              ? { status: OrderStatus.Done }
-              : {}),
-          }
-        );
       } catch (e) {
         toast.error("Das Drucken hat nicht funktioniert...");
       }
@@ -109,27 +84,23 @@ export default function PrinterOutput({
   }
 
   useEffect(() => {
-    if (enabled) {
-      const ordersQuery = query(
-        collection(db, Collection.Orders).withConverter(orderConverter),
-        where("eventId", "==", event.id),
-        where("status", "==", OrderStatus.Confirmed),
-        where("outputs", "array-contains-any", output.outputCategories),
-        orderBy("createdAt"),
-        limit(1)
-      );
-      const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
-        if (snapshot.docs.length > 0) {
-          const order = snapshot.docs[0];
-          if (currentlyPrinting !== order.id) {
-            setCurrentlyPrinting(order.id);
-            print(order.data());
-          }
-        }
-      });
-      return unsubscribe;
+    if (
+      outputState.currentOrder &&
+      output.outputCategories.some(
+        (o) => outputState.currentOrder?.outputs.includes(o)
+      )
+    ) {
+      print(outputState.currentOrder);
     }
-  }, [event.id, enabled]);
+  }, [outputState.currentOrder]);
+
+  useEffect(() => {
+    if (connectionStatus === PrinterConnectionStatus.Connected) {
+      outputState.registerCategoryListeners(output.outputCategories);
+    } else {
+      outputState.unregisterCategoryListeners(output.outputCategories);
+    }
+  }, [connectionStatus]);
 
   return (
     <Card>

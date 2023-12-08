@@ -1,4 +1,5 @@
 import AddOutputForm from "@/components/output/AddOutputForm";
+import Print from "@/components/output/Print";
 import PrinterOutput from "@/components/output/PrinterOutput";
 import { EVENT_QUERY } from "@/lib/queries";
 import useEventStore from "@/lib/store/event";
@@ -40,6 +41,7 @@ export default function Orders() {
         <h2 className="h1">Bestellungen</h2>
         <AddOutputForm />
       </div>
+      <Print />
       {event.printers.map((printerOutput) => (
         <PrinterOutput key={printerOutput.id} output={printerOutput} />
       ))}

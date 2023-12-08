@@ -32,7 +32,7 @@ export default function usePrinter() {
         ePosDev.createDevice(
           "local_printer",
           ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: false, buffer: false },
+          { crypto: true, buffer: true },
           (devobj, retcode) => {
             if (retcode === "OK") {
               printer.current = devobj;
