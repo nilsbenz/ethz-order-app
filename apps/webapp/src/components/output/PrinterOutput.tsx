@@ -1,4 +1,5 @@
 import usePrinter, { PrinterConnectionStatus } from "@/lib/hooks/usePrinter";
+import { getFilteredOrder } from "@/lib/orders";
 import { printOrder } from "@/lib/printer";
 import useEventStore from "@/lib/store/event";
 import useOutputStore from "@/lib/store/output";
@@ -15,6 +16,7 @@ import {
   CollapsibleTrigger,
   Input,
   Label,
+  Separator,
   Switch,
 } from "@order-app/ui";
 import { ChevronsUpDownIcon, PlugIcon } from "lucide-react";
@@ -28,6 +30,52 @@ const prettyStatus: { [key in PrinterConnectionStatus]: string } = {
   [PrinterConnectionStatus.Connected]: "Verbunden",
   [PrinterConnectionStatus.Error]: "Fehler",
 };
+
+function HistoryItem({
+  order,
+  output,
+}: {
+  order: Order;
+  output: PrinterOutputType;
+}) {
+  const event = useEventStore((state) => state.event!);
+
+  const filteredOrder = getFilteredOrder(event, order, output.outputCategories);
+
+  return (
+    <div className="rounded-md border px-4 py-3">
+      <div className="flex items-end justify-between">
+        <p className="text-xl font-medium">Tisch {order.table}</p>
+        <p>
+          {order.createdAt.toLocaleString("ch-de", {
+            day: "numeric",
+            month: "short",
+            year: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </p>
+      </div>
+      <Separator className="my-1" />
+      <div>
+        {filteredOrder.items.map((item) => (
+          <div key={item.articleId}>
+            <p>
+              <span className="font-medium tabular-nums">{item.amount}</span> x{" "}
+              {event?.articles.find((a) => a.id === item.articleId)
+                ?.displayName ?? "Unbekannt"}
+            </p>
+            {item.comment && (
+              <p className="ml-4 text-sm text-muted-foreground">
+                {item.comment}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function PrinterOutput({
   output,
@@ -76,7 +124,7 @@ export default function PrinterOutput({
           });
         await Promise.all(promises);
         outputState.addPrintedCategories(output.outputCategories);
-        setHistory([order, ...history.slice(0, 9)]);
+        setHistory([order, ...history.slice(0, 19)]);
       } catch (e) {
         toast.error("Das Drucken hat nicht funktioniert...");
       }
@@ -142,21 +190,12 @@ export default function PrinterOutput({
                 </CollapsibleTrigger>
               </div>
               {history.length > 0 && (
-                <div className="rounded-md border px-4 py-3 font-mono text-sm">
-                  Bestellung von {history[0].table} |{" "}
-                  {new Date(history[0].createdAt).toLocaleString("ch-de")}
-                </div>
+                <HistoryItem order={history[0]} output={output} />
               )}
               {history.length > 1 && (
                 <CollapsibleContent className="space-y-2">
                   {history.slice(1).map((order) => (
-                    <div
-                      key={order.id}
-                      className="rounded-md border px-4 py-3 font-mono text-sm"
-                    >
-                      Bestellung von {order.table} |{" "}
-                      {new Date(order.createdAt).toLocaleString("ch-de")}
-                    </div>
+                    <HistoryItem key={order.id} order={order} output={output} />
                   ))}
                 </CollapsibleContent>
               )}

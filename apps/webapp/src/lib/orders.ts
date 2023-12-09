@@ -1,4 +1,4 @@
-import { Event, OrderItem } from "@order-app/types";
+import { Event, Order, OrderItem } from "@order-app/types";
 
 export function getOutputCategories(event: Event, items: OrderItem[]) {
   return Array.from(
@@ -23,4 +23,27 @@ export function getOutputCategories(event: Event, items: OrderItem[]) {
         .filter(Boolean) as string[]
     )
   );
+}
+
+export function getFilteredOrder(
+  event: Event,
+  order: Order,
+  outputCategories: string[]
+): Order {
+  return {
+    ...order,
+    items: order.items.filter((item) => {
+      const article = event.articles.find((a) => a.id === item.articleId);
+      if (!article) {
+        return false;
+      }
+      if (article.customOutput) {
+        return outputCategories.includes(article.customOutput);
+      }
+      const category = event.articleCategories.find(
+        (c) => c.id === article.category
+      );
+      return category ? outputCategories.includes(category?.output) : false;
+    }),
+  };
 }
