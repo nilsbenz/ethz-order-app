@@ -1,13 +1,20 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useInterval } from "usehooks-ts";
 import { Collection } from "../collections";
 import { auth, db } from "../firebase";
 import { appUserConverter } from "../model/users";
 import useAuthStore from "../store/auth";
 
 export default function useUser() {
-  const { user, setUser, setUserData } = useAuthStore();
+  const { user, userData, setUser, setUserData } = useAuthStore();
+  const [refetch, setRefetch] = useState(0);
+
+  useInterval(
+    () => setRefetch((prev) => prev + 1),
+    user && !userData ? 1000 : null
+  );
 
   useEffect(() => {
     if (user) {
@@ -23,7 +30,7 @@ export default function useUser() {
     } else {
       setUserData(undefined);
     }
-  }, [user?.uid]);
+  }, [user?.uid, refetch]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) =>

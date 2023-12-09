@@ -73,7 +73,10 @@ export default function Login() {
         </Button>
       </form>
       <p>
-        Du bist neu hier? <Link to={Page.Register}>Registrieren</Link>
+        Du bist neu hier?{" "}
+        <Link to={{ pathname: Page.Register, search: location.search }}>
+          Registrieren
+        </Link>
       </p>
     </div>
   );

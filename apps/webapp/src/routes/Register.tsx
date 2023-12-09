@@ -2,14 +2,20 @@ import { register } from "@/lib/auth";
 import { Page } from "@/lib/pages";
 import { Button, Input, Label } from "@order-app/ui";
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
   const mailInput = useRef<HTMLInputElement>(null);
   const passwordInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  function getNextPath() {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get("next") ?? Page.Profile;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,7 +29,7 @@ export default function Register() {
       }
       const res = await register(username, password);
       if (res.success) {
-        navigate(Page.Index);
+        navigate(getNextPath());
         return;
       }
       setError(res.message ?? null);
@@ -56,7 +62,10 @@ export default function Register() {
         </Button>
       </form>
       <p>
-        Du warst schon mal hier? <Link to={Page.Login}>Anmelden</Link>
+        Du warst schon mal hier?{" "}
+        <Link to={{ pathname: Page.Login, search: location.search }}>
+          Anmelden
+        </Link>
       </p>
     </div>
   );
