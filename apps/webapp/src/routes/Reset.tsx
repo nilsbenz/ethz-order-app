@@ -2,19 +2,14 @@ import { resetPassword } from "@/lib/auth";
 import { Page } from "@/lib/pages";
 import { Button, Input, Label } from "@order-app/ui";
 import { useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Register() {
-  const navigate = useNavigate();
   const location = useLocation();
   const mailInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  function getNextPath() {
-    const searchParams = new URLSearchParams(location.search);
-    return searchParams.get("next") ?? Page.Profile;
-  }
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,12 +17,13 @@ export default function Register() {
       setLoading(true);
       const username = mailInput.current?.value;
       if (!username) {
-        setError("");
+        setError("Bitte geben Sie eine gültige E-Mail-Adresse an");
         return;
       }
       const res = await resetPassword(username);
       if (res.success) {
-        navigate(getNextPath());
+        setError(null);
+        setSuccessMessage("Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet!");
         return;
       }
       setError(res.message ?? null);
@@ -51,6 +47,10 @@ export default function Register() {
         {error && (
           <p className="text-sm font-medium text-destructive">{error}</p>
         )}
+        {successMessage && (
+          <p className="text-sm font-medium text-success">{successMessage}</p>
+        )}
+
         <Button type="submit" disabled={loading}>
           Passwort zurücksetzen
         </Button>

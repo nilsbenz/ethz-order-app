@@ -5,7 +5,7 @@ export const Page = {
   Profile: "/profil",
   Companies: "/vereine",
   Admin: "/admin",
-  Reset: "/reset",
+  Reset: "/passwort-vergessen",
 } as const;
 export type Page = (typeof Page)[keyof typeof Page];
 
