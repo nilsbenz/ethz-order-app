@@ -8,6 +8,7 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   updateProfile,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { Collection } from "./collections";
@@ -126,4 +127,22 @@ export async function updateUser(userId: string, user: Partial<AppUser>) {
     doc(db, Collection.Users, userId).withConverter(appUserConverter),
     user
   );
+}
+
+export async function resetPassword(email: string) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return {
+      success: true
+    }
+  } catch (e) {
+    const error = e as FirebaseError;
+    if (!error) {
+      return { success: false };
+    }
+    return {
+      success: false,
+      message: "Bitte geben Sie eine gültige E-Mail-Adresse an"
+    };
+  }
 }

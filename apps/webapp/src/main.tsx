@@ -12,6 +12,7 @@ import Home from "./routes/Home.tsx";
 import Login from "./routes/Login.tsx";
 import Profile from "./routes/Profile.tsx";
 import Register from "./routes/Register.tsx";
+import Reset from "./routes/Reset.tsx";
 import Company from "./routes/companies/Company.tsx";
 import Companies from "./routes/companies/Index.tsx";
 import Articles from "./routes/companies/events/Articles.tsx";
@@ -33,6 +34,7 @@ const pages: {
   [Page.Index]: { element: <Home /> },
   [Page.Register]: { element: <Register /> },
   [Page.Login]: { element: <Login /> },
+  [Page.Reset]: { element: <Reset /> },
   [Page.Profile]: { element: <Profile />, protected: UserLevel.User },
   [Page.Companies]: { element: <Companies />, protected: UserLevel.SuperAdmin },
   [`${Page.Companies}/:company`]: {

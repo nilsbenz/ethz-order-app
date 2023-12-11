@@ -1,38 +1,29 @@
-import { login } from "@/lib/auth";
+import { resetPassword } from "@/lib/auth";
 import { Page } from "@/lib/pages";
-import useAuthStore from "@/lib/store/auth";
 import { Button, Input, Label } from "@order-app/ui";
 import { useRef, useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-export default function Login() {
-  const navigate = useNavigate();
+export default function Register() {
   const location = useLocation();
-  const user = useAuthStore((state) => state.user);
   const mailInput = useRef<HTMLInputElement>(null);
-  const passwordInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  function getNextPath() {
-    const searchParams = new URLSearchParams(location.search);
-    return searchParams.get("next") ?? Page.Profile;
-  }
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
       setLoading(true);
       const username = mailInput.current?.value;
-      const password = passwordInput.current?.value;
-      if (!username || !password) {
-        setError("");
+      if (!username) {
+        setError("Bitte geben Sie eine gültige E-Mail-Adresse an");
         return;
       }
-      const res = await login(username, password);
+      const res = await resetPassword(username);
       if (res.success) {
-        const next = getNextPath();
-        navigate(next);
+        setError(null);
+        setSuccessMessage("Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet!");
         return;
       }
       setError(res.message ?? null);
@@ -42,17 +33,9 @@ export default function Login() {
     }
   }
 
-  if (user === undefined) {
-    return null;
-  }
-
-  if (user !== null) {
-    return <Navigate to={getNextPath()} />;
-  }
-
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="h1">Anmelden</h2>
+      <h2 className="h1">Passwort zurücksetzen</h2>
       <form
         className="mx-auto my-8 flex w-full max-w-xs flex-col gap-4"
         onSubmit={handleSubmit}
@@ -61,15 +44,15 @@ export default function Login() {
           <Label htmlFor="mail">Mailadresse</Label>
           <Input id="mail" ref={mailInput} required />
         </div>
-        <div>
-          <Label htmlFor="pass">Passwort</Label>
-          <Input id="pass" type="password" ref={passwordInput} required />
-        </div>
         {error && (
           <p className="text-sm font-medium text-destructive">{error}</p>
         )}
+        {successMessage && (
+          <p className="text-sm font-medium text-success">{successMessage}</p>
+        )}
+
         <Button type="submit" disabled={loading}>
-          Anmelden
+          Passwort zurücksetzen
         </Button>
       </form>
       <p>
@@ -79,9 +62,9 @@ export default function Login() {
         </Link>
       </p>
       <p>
-        Passwort vergessen?{" "}
-        <Link to={{ pathname: Page.Reset, search: location.search }}>
-          Passwort zurücksetzen
+        Du warst schon mal hier?{" "}
+        <Link to={{ pathname: Page.Login, search: location.search }}>
+          Anmelden
         </Link>
       </p>
     </div>
