@@ -26,6 +26,7 @@ import {
   Colors,
   ArcElement,
 } from 'chart.js';
+import {getTableLabel} from "@/lib/tables.ts";
 
 ChartJS.register(
     CategoryScale,
@@ -111,7 +112,7 @@ export default function Visualizations() {
     }]
   };
 
-    // Daten sortieren
+  // Daten sortieren
   // Absteigend sortieren
   if (sortorder === "desc") {
     data = JSON.parse(JSON.stringify(data));
@@ -172,6 +173,49 @@ export default function Visualizations() {
     },
   };
 
+  const tabledata = event.tables.tables.map(sumAmountsForTable);
+  const doughnutlabels = event.tables.tables.map(table => getTableLabel(table.col, event.tables.colLabels) +
+      getTableLabel(table.row, event.tables.rowLabels));
+  const doughnutdata = {
+    labels: doughnutlabels,
+    datasets: [{
+      label : "CHF",
+      data: tabledata,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(255, 159, 64, 0.6)',
+        'rgba(255, 205, 86, 0.6)',
+        'rgba(75, 192, 192, 0.6)',
+        'rgba(54, 162, 235, 0.6)',
+        'rgba(153, 102, 255, 0.6)',
+        'rgba(201, 203, 207, 0.6)'
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)'
+      ],
+      borderWidth: 2
+    }]
+  };
+  const optionsdonut = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+      title: {
+        display: true,
+        text: "Einnahmen pro Tisch",
+      }
+    },
+  };
+
+
   function sumAmountsForArticleId(art:Article): number {
     let totalAmount = 0;
     const articleId = art.id;
@@ -180,6 +224,28 @@ export default function Visualizations() {
       order.items.forEach(item => {
         if (item.articleId === articleId) {
           totalAmount += item.amount;
+        }
+      });
+    });
+
+    return totalAmount;
+  }
+
+  function sumAmountsForTable(table:{row: number, col: number}) : number {
+    let totalAmount = 0;
+    const tableid = getTableLabel(table.col, event!.tables.colLabels) +
+        getTableLabel(table.row, event!.tables.rowLabels);
+
+    orders?.forEach(order => {
+      order.items.forEach(item => {
+        if (order.table == tableid) {
+          let price = 0
+          event!.articles.forEach(article => {
+            if (article.id == item.articleId) {
+              price = article.price;
+            }
+          })
+          totalAmount += item.amount * price;
         }
       });
     });
@@ -254,7 +320,10 @@ export default function Visualizations() {
             <p>Die Bestellungen werden geladen...</p>
         ) : (
 
+
+
         <div>
+          <h2 className="h2">Nach Artikel</h2 >
           <div className="flex flex-col sm:flex-row gap-2 justify-between">
             <ToggleGroup value={bartype} onValueChange={(value) => { if (value) setBarType(value);}} type="single">
               <ToggleGroupItem value="amount" aria-label="Toggle bold">
@@ -274,7 +343,9 @@ export default function Visualizations() {
             </ToggleGroup>
           </div>
         <Bar options={options} data={data} />
-          <Doughnut options={options} data={data} />
+          <br/><br/><br/><br/>
+          <h2 className="h2">Nach Tisch</h2>
+          <Doughnut options={optionsdonut} data={doughnutdata} />
         </div>
       )}
       </div>
