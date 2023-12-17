@@ -16,5 +16,7 @@ export * from "./components/sheet";
 export * from "./components/slider";
 export * from "./components/switch";
 export * from "./components/tabs";
+export * from "./components/toggle";
+export * from "./components/toggle-group";
 
 export * from "./lib/utils";
