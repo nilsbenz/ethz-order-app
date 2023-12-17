@@ -97,6 +97,11 @@
       user-select: none;
     }
   }
+  @media (display-mode: standalone) {
+    html {
+      min-height: 100vh;
+    }
+  }
 }
 
 @layer components {
