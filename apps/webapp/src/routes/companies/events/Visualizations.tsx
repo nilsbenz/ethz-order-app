@@ -107,26 +107,8 @@ export default function Visualizations() {
       {
         label: description,
         data: bardata,
-        backgroundColor: event.articles.map((article) => {
-          let color = article.customColor;
-          if (!color) {
-            const category = event.articleCategories.find(
-              (c) => c.id === article.category
-            );
-            color = category!.color;
-          }
-          return getColor(color);
-        }),
-        borderColor: event.articles.map((article) => {
-          let color = article.customColor;
-          if (!color) {
-            const category = event.articleCategories.find(
-              (c) => c.id === article.category
-            );
-            color = category!.color;
-          }
-          return getBorderColor(color);
-        }),
+        backgroundColor: [],
+        borderColor: [],
         borderWidth: 2,
       },
     ],
@@ -140,24 +122,9 @@ export default function Visualizations() {
       const dataIndexA = data.labels.indexOf(a);
       const dataIndexB = data.labels.indexOf(b);
       return (
-        data.datasets[0].data[dataIndexB] - data.datasets[0].data[dataIndexA]
+          data.datasets[0].data[dataIndexB] - data.datasets[0].data[dataIndexA]
       );
     });
-    data.datasets[0].backgroundColor.sort((a, b) => {
-      const dataIndexA = data.datasets[0].backgroundColor.indexOf(a);
-      const dataIndexB = data.datasets[0].backgroundColor.indexOf(b);
-      return (
-        data.datasets[0].data[dataIndexB] - data.datasets[0].data[dataIndexA]
-      );
-    });
-    data.datasets[0].borderColor.sort((a, b) => {
-      const dataIndexA = data.datasets[0].borderColor.indexOf(a);
-      const dataIndexB = data.datasets[0].borderColor.indexOf(b);
-      return (
-        data.datasets[0].data[dataIndexB] - data.datasets[0].data[dataIndexA]
-      );
-    });
-
     data.datasets.forEach((dataset) => {
       dataset.data.sort((a, b) => b - a);
     });
@@ -169,28 +136,41 @@ export default function Visualizations() {
       const dataIndexA = data.labels.indexOf(a);
       const dataIndexB = data.labels.indexOf(b);
       return (
-        data.datasets[0].data[dataIndexA] - data.datasets[0].data[dataIndexB]
+          data.datasets[0].data[dataIndexA] - data.datasets[0].data[dataIndexB]
       );
     });
-    data.datasets[0].backgroundColor.sort((a, b) => {
-      const dataIndexA = data.datasets[0].backgroundColor.indexOf(a);
-      const dataIndexB = data.datasets[0].backgroundColor.indexOf(b);
-      return (
-        data.datasets[0].data[dataIndexA] - data.datasets[0].data[dataIndexB]
-      );
-    });
-    data.datasets[0].borderColor.sort((a, b) => {
-      const dataIndexA = data.datasets[0].borderColor.indexOf(a);
-      const dataIndexB = data.datasets[0].borderColor.indexOf(b);
-      return (
-        data.datasets[0].data[dataIndexA] - data.datasets[0].data[dataIndexB]
-      );
-    });
-
     data.datasets.forEach((dataset) => {
       dataset.data.sort((a, b) => a - b);
     });
   }
+
+  data.datasets[0].backgroundColor = data.labels.map(art => {
+    const article = event.articles.find(
+        (c) => c.displayName === art
+    );
+    let color = article.customColor;
+    if (!color) {
+      const category = event.articleCategories.find(
+          (c) => c.id === article.category
+      );
+      color = category!.color;
+    }
+    return getColor(color);
+  })
+
+  data.datasets[0].borderColor = data.labels.map(art => {
+    const article = event.articles.find(
+        (c) => c.displayName === art
+    );
+    let color = article.customColor;
+    if (!color) {
+      const category = event.articleCategories.find(
+          (c) => c.id === article.category
+      );
+      color = category!.color;
+    }
+    return getBorderColor(color);
+  })
 
   const options = {
     responsive: true,
@@ -386,12 +366,12 @@ export default function Visualizations() {
               </ToggleGroupItem>
             </ToggleGroup>
             <ToggleGroup
-              value={sortorder}
-              onValueChange={(value) => {
-                if (value) setSortOrder(value);
-              }}
-              type="single"
-              variant="outline"
+                value={sortorder}
+                onValueChange={(value) => {
+                  if (value) setSortOrder(value);
+                }}
+                type="single"
+                variant="outline"
             >
               <ToggleGroupItem value="asc" aria-label="Toggle bold">
                 Aufsteigend
