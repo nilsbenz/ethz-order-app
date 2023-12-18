@@ -100,15 +100,39 @@ export default function Visualizations() {
     bardata = event.articles.map(getRevenue);
   }
 
-  const labels = event.articles.map((article) => article.displayName);
+  const labels = event.articles.map((article: { displayName: string; }) => article.displayName);
   let data = {
     labels,
     datasets: [
       {
         label: description,
         data: bardata,
-        backgroundColor: [],
-        borderColor: [],
+        backgroundColor:  labels.map(art => {
+          const article = event.articles.find(
+              (c) => c.displayName === art
+          );
+          let color = article?.customColor;
+          if (!color) {
+            const category = event.articleCategories.find(
+                (c) => c.id === article?.category
+            );
+            color = category!.color;
+          }
+          return getColor(color);
+        }),
+        borderColor: labels.map(art => {
+          const article = event.articles.find(
+              (c) => c.displayName === art
+          );
+          let color = article?.customColor;
+          if (!color) {
+            const category = event.articleCategories.find(
+                (c) => c.id === article?.category
+            );
+            color = category!.color;
+          }
+          return getBorderColor(color);
+        }),
         borderWidth: 2,
       },
     ],
@@ -148,10 +172,10 @@ export default function Visualizations() {
     const article = event.articles.find(
         (c) => c.displayName === art
     );
-    let color = article.customColor;
+    let color = article?.customColor;
     if (!color) {
       const category = event.articleCategories.find(
-          (c) => c.id === article.category
+          (c) => c.id === article?.category
       );
       color = category!.color;
     }
@@ -162,10 +186,10 @@ export default function Visualizations() {
     const article = event.articles.find(
         (c) => c.displayName === art
     );
-    let color = article.customColor;
+    let color = article?.customColor;
     if (!color) {
       const category = event.articleCategories.find(
-          (c) => c.id === article.category
+          (c) => c.id === article?.category
       );
       color = category!.color;
     }
