@@ -20,7 +20,9 @@ export default function TwintCode({
 
   useLayoutEffect(() => {
     QRCode.toString(
-      "02:ad5e87b2194248cf813c18d2cf98b2ce#54b03e5ee3080fa9fbe14a1fd12ffe7861a443eb#",
+        // JV Niedergampel 02:e0f227f2f3c1473782ea3f9a3c4c5c62#f24c71d7e0f4b762921f937d48fa9c05807d81bd#a~PF6Apy0JRQiEDTfRJmVC4Q~s~HRMtqivYTRipEAnOc3rBuQ
+        // Nils Twint: 02:ad5e87b2194248cf813c18d2cf98b2ce#54b03e5ee3080fa9fbe14a1fd12ffe7861a443eb#
+      "02:e0f227f2f3c1473782ea3f9a3c4c5c62#f24c71d7e0f4b762921f937d48fa9c05807d81bd#a~PF6Apy0JRQiEDTfRJmVC4Q~s~HRMtqivYTRipEAnOc3rBuQ",
       {
         type: "svg",
         color: {
